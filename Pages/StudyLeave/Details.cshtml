@@ -1,0 +1,167 @@
+﻿@page
+@model StudyLeaveAppraisals.Pages.StudyLeave.DetailsModel
+@{
+}
+
+<div class="container">
+
+    @if (Model.Message != null)
+    {
+        @if (!Model.isSuccess)
+        {
+            <div class="alert alert-danger" style="text-align:center">
+                @Model.Message
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-success" style="text-align:center">
+                @Model.Message
+            </div>
+        }
+    }
+
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <a type="button" class="btn btn-outline-primary" asp-page="/StudyLeave/Index">Back to Index</a>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <dt class="col-md-2">
+            Event:
+        </dt>
+        <dd class="col-md-10">
+            @Model.Request.Event
+        </dd>
+        <dt class="col-md-2">
+            Date:
+        </dt>
+        <dd class="col-md-10">
+            @Model.Request.DateOfEvent.ToString("dd/MM/yyyy")
+        </dd>
+        <dt class="col-md-2">
+            Duration:
+        </dt>
+        <dd class="col-md-10">
+            @Model.Request.Duration
+        </dd>
+        <dt class="col-md-2">
+            Costs:
+        </dt>
+        <dd class="col-md-2">
+            Travel: @Model.Request.CostTravel.Value.ToString("C")
+        </dd>
+        <dd class="col-md-2">
+            Accomodation: @Model.Request.CostAccomodation.Value.ToString("C")
+        </dd>
+        <dd class="col-md-2">
+            Event: @Model.Request.CostEvent.Value.ToString("C")
+        </dd>
+        <dd class="col-md-4">
+            Total Requested: @Model.Request.TotalRequested.Value.ToString("C")
+        </dd>
+    </div>
+    @if (Model.Request.Granted == "Yes")
+    {
+        <div class="row mb-5 g-5">
+            <dt class="col-md-2">
+                Granted By:
+            </dt>
+            <dd class="col-md-2">
+                @Model.Request.GrantedBy
+            </dd>
+            <dt class="col-md-2">
+                Amount:
+            </dt>
+            <dd class="col-md-2">
+                @Model.Request.TotalGranted.Value.ToString("C")
+            </dd>
+
+            <dt class="col-md-2">
+                Date:
+            </dt>
+            <dd class="col-md-2">
+                @Model.Request.GrantedDate.Value.ToString("dd/MM/yyyy")
+            </dd>        
+        </div>
+    }
+    @if(Model.isSupervisor && Model.Request.StaffCode != Model.staffCode)
+    {
+        <div class="row">
+            <dt class="col-md-2">
+                Requested By:
+            </dt>
+            <dd class="col-md-4">
+                @Model.Request.RequesterName
+            </dd>
+        </div>
+        <br />
+
+        <br />
+
+        <br />
+        <form method="post">
+            <div class="row">
+                <div class="col-md-2" style="text-align:right">
+                    <label>Grant request:</label>
+                </div>
+                <div class="col-md-10">
+                    <select name="sGranted">
+                        <option selected value="Pending">Pending</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+            </div>
+            <br />
+
+            <br />
+            
+            <div class="row">
+                <div class="col-md-2" style="text-align:right">
+                    <label>Total Granted (£):</label>
+                </div>
+                <div class="col-md-2">
+                    <input class="w-75" name="iTotalGranted" id="iTotal" />                     
+                </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-outline-primary" style="font-size:small" onclick="SetDefaultAmount()">Set To Requested Amount</button>
+                </div>                
+                <div class="col-md-2" style="text-align:right">
+                    <label>Fund:</label>
+                </div>
+                <div class="col-md-3">
+                    <select name="sFund">
+                        <option value="" selected>...select</option>
+                        @foreach(var f in Model.Funds)
+                        {
+                            <option value=@f.Fund>@f.Fund</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                </div>
+            </div>
+            <br />
+
+            <br />
+            <div class="row mb-5 g-5">
+                <div class="col-md-4">
+                    <input type="submit" class="btn btn-outline-primary" value="Submit" />
+                </div>
+            </div>
+        </form>
+    }
+
+
+</div>
+
+<script>
+
+    function SetDefaultAmount()
+    {
+        document.getElementById("iTotal").value = @Model.Request.TotalRequested.Value;
+    }
+
+</script>

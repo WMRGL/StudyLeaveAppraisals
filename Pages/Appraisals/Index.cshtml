@@ -1,0 +1,151 @@
+﻿@page
+@model IndexModel
+@{
+}
+<div class="container">
+    <h1>Appraisal clinic data</h1>
+    <form method="post">
+        <div class="row mb-5 g-5">
+            <div class="col-md-1">
+                @if (Model.isSupervisor)
+                {
+                    <label>Clinician:</label>
+                }
+            </div>
+            <div class="col-md-4">
+                @if(Model.isSupervisor)
+                {
+                    <select name="clinicianCode" asp-for="sClinCode">
+                        <option value="" selected>...Select</option>
+                        @foreach(var s in Model.staffMembers)
+                        {
+                            <option value=@s.STAFF_CODE>@s.NAME</option>
+                        }
+                    </select>
+                }
+            </div>
+            <div class="col-md-1">
+                <label>From:</label>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="dStart" asp-for="startDate" />
+            </div>
+            <div class="col-md-1">
+                <label>To:</label>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="dEnd" asp-for="endDate" />
+            </div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-4">
+                <input type="submit" class="btn btn-secondary" />
+            </div>
+        </div>
+    </form>
+
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <label>Clinics held in period:</label>
+        </div>
+        <div class="col-md-1">
+            @Model.iClinicsHeld
+        </div>        
+        
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-md-2">
+            <label>Patients seen:</label>
+        </div>
+        <div class="col-md-1">
+            @Model.iPatientsSeen
+        </div>
+        <div class="col-md-2">
+            <label>DNAs:</label>
+        </div>
+        <div class="col-md-1">
+            @Model.iDNAs
+        </div>
+        <div class="col-md-2">
+            <label>Cancellations:</label>
+        </div>
+        <div class="col-md-1">
+            @Model.iCancellations
+        </div>        
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <label>Not Recorded:</label>
+        </div>
+        <div class="col-md-1">
+            @Model.iNotRecorded
+        </div>    
+        <div class="col-md-2">
+            <label>Seen By Another Clinician:</label>
+        </div>
+        <div class="col-md-1">
+            @Model.iPatientsSeenByAnother
+        </div>
+    </div>
+        
+    <div class="row mb-5">
+        <div class="col-md-2">
+            <label>Total Appointments:</label>
+        </div>
+        <div class="col-md-1">
+            @Model.iTotalAppointments
+        </div>
+        
+    </div>
+
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Clinic</th>
+                    <th>Clinician(s)</th>
+                    <th>Type</th>
+                    <th>Outcome</th>
+                    <th>Seen By</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var a in Model.totalappts)
+                {                    
+                    <tr>                        
+                        <td>
+                            @if (@a.BOOKED_DATE.HasValue)
+                            {
+                                @a.BOOKED_DATE.Value.ToString("dd/MM/yyyy")
+                            }
+                        </td>
+                        <td>
+                            @if (@a.BOOKED_TIME.HasValue)
+                            {
+                                @a.BOOKED_TIME.Value.ToString("HH:mm")
+                            }
+                        </td>                        
+                        <td>@a.Clinic</td>
+                        <td>
+                            @a.Clinician
+                            @if(@a.STAFF_CODE_2 != null)
+                            {
+                                <span>, @a.Clinician2</span>
+                            }
+                            @if (@a.STAFF_CODE_3 != null)
+                            {
+                                <span>, @a.Clinician3</span>
+                            }
+                        </td>
+                        <td>@a.AppType</td>
+                        <td>@a.Attendance</td>
+                        <td>@a.SeenByClinician</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

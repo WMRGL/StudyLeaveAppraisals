@@ -1,0 +1,56 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<br />
+<br />
+<h2 class="text-center">User Login</h2>
+<br />
+<br />
+<div class="row mb-5 g-5">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        @if (TempData["UserLoginFailed"] != null)
+        {
+            <p class="alert alert-danger">@TempData["UserLoginFailed"]</p>
+        }
+
+        <form id="frmLogin">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="UserDetails.EMPLOYEE_NUMBER" class="control-label"></label>
+                <input name="sUsername" asp-for="UserDetails.EMPLOYEE_NUMBER" class="form-control" />
+                <span asp-validation-for="UserDetails.EMPLOYEE_NUMBER" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserDetails.PASSWORD" class="control-label"></label>
+                <input name="sPassword" type="password" asp-for="UserDetails.PASSWORD" class="form-control" />
+                <span asp-validation-for="UserDetails.PASSWORD" class="text-danger"></span>
+            </div>
+            <br /><br />
+            <div class="form-group">
+                <button id="btnSubmit">Login</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+
+<script>
+    document.getElementById("btnSubmit").addEventListener("click", DoSubmit);
+
+    function DoSubmit() 
+    {
+        document.getElementById("frmLogin").Submit();
+    }
+
+</script>
+
+
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+            }

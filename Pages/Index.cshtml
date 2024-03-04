@@ -1,0 +1,22 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="container">
+    <div class="text-center">
+        <h1 class="display-4">Welcome, @Model.staffName!</h1>
+        <p>The new system for requesting study leave and appraisals.</p>
+    </div>
+
+    <div class="row mb-5 g-5">        
+        <a type="button" class="btn btn-lg btn-outline-primary" asp-area="" asp-page="/StudyLeave/Index">Study Leave Requests</a>
+        <a type="button" class="btn btn-lg btn-outline-primary" asp-area="" asp-page="/Appraisals/Index">Appraisals</a>
+
+    </div>
+
+
+
+
+</div>

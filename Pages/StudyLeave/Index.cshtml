@@ -1,0 +1,98 @@
+﻿@page
+@model IndexModel
+@{
+}
+
+<div class="container">
+    <div class="row mb-5 g-5">
+        <h1>Study Leave Requests</h1>
+    </div>
+    <div class="row mb-5 g-5">
+        <div class="col-md-4">
+            <a type="button" class="btn btn-outline-primary" asp-area="" asp-page="/StudyLeave/CreateNew">Create New Request</a>
+        </div>
+    </div>    
+    @if(Model.MyRequests.Count() > 0)
+    {
+        <div class="row mb-5 g-5">
+            <h2>My Requests</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Duration</th>
+                        <th>Total Requested</th>
+                        <th>Granted</th>                
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model.MyRequests)
+                    {
+                        <tr>
+                            <td><a type="button" class="btn btn-outline-primary" asp-page="/StudyLeave/Details" asp-route-ID=@r.ID>View</a></td>
+                            <td>@r.Event</td>
+                            <td>@r.DateOfEvent.ToString("dd/MM/yyyy")</td>
+                            <td>@r.Duration days</td>
+                            <td>@r.TotalRequested.Value.ToString("C")</td>
+                            <td>@r.Granted</td>                    
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="row mb-5 g-5">
+            <h2>You have no requests.</h2>
+        </div>
+    }
+    <br /><br /><br /><br />
+
+    @*@if (Model.AllRequests.Count() > 0 && Model.isSupervisor)*@
+    @if (Model.isSupervisor)
+    {
+        @if (Model.AllRequests.Count() > 0)
+        {
+            <div class="row mb-5 g-5">
+                <h2>Requests Awaiting Approval</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Requested By</th>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Duration</th>
+                            <th>Total Requested</th>
+                            <th>Granted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model.AllRequests)
+                        {
+                            <tr>
+                                <td><a type="button" class="btn btn-outline-primary" asp-page="/StudyLeave/Details" asp-route-ID=@r.ID>View</a></td>
+                                <td>@r.RequesterName</td>
+                                <td>@r.Event</td>
+                                <td>@r.DateOfEvent.ToString("dd/MM/yyyy")</td>
+                                <td>@r.Duration days</td>
+                                <td>@r.TotalRequested.Value.ToString("C")</td>
+                                <td>@r.Granted</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="row mb-5 g-5">
+                <h2>There are no requests awaiting approval.</h2>
+            </div>
+        }
+    }
+    
+</div>

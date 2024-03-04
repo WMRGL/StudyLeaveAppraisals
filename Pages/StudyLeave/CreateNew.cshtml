@@ -1,0 +1,117 @@
+﻿@page
+@model CreateNewModel
+@{
+}
+
+
+
+<container>
+    <div class="row mb-5 g-5">
+        <h1>New Study Leave request for @Model.staffName</h1>
+    </div>
+
+    <div class="row mb-5 g-5">
+        <div class="col-md-4">
+            <a type="button" class="btn btn-outline-primary" asp-page="/StudyLeave/Index">Back to Index</a>
+        </div>
+    </div>
+
+    @if(Model.Message != null)
+    {
+        @if (!Model.isSuccess)
+        {
+            <div class="alert alert-danger" style="text-align:center">
+                @Model.Message
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-success" style="text-align:center">
+                @Model.Message
+            </div>
+        }
+    }
+
+    <form method="post">
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Event Name:</label>
+            </div>
+            <div class="col-md-4">
+                <input name="sEvent" />
+            </div>
+            <div class="col-md-2">
+                <label>Date of Event:</label>
+            </div>
+            <div class="col-md-4">
+                <input type="date" name="dEventDate" />
+            </div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Travel Cost (£):</label>
+            </div>
+            <div class="col-md-1">
+                <input class="w-75" name="iTravelCost" id="tCost" />
+            </div>
+            <div class="col-md-2">
+                <label>Accomodation Cost (£):</label>
+            </div>
+            <div class="col-md-1">
+                <input class="w-75" name="iAccomCost" id="aCost" />
+            </div>
+            <div class="col-md-2">
+                <label>Event Cost (£):</label>
+            </div>
+            <div class="col-md-1">
+                <input class="w-75" name="iEventCost" id="eCost" />
+            </div>
+            <div class="col-md-2">
+                <label>Duration (days):</label>
+            </div>
+            <div class="col-md-1">
+                <input class="w-75" name="iDays" />
+            </div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Total Requested (£):</label>
+            </div>
+            <div class="col-md-1">
+                <input id="totalReq" class="w-75" name="iTotalReq" />
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-outline-primary" style="font-size:small" onclick="AutoCalculate()">Auto-Calculate</button>
+            </div>
+            <div class="col-md-2">
+                <label>Date Requested:</label>
+            </div>
+            <div class="col-md-5">
+                <input type="date" name="dDateRequested" />
+            </div>
+        </div>
+
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <input type="submit" class="btn btn-outline-primary" value="Submit" />
+            </div>
+        </div>
+
+    </form>
+</container>
+
+<script>
+
+
+
+    function AutoCalculate()
+    {
+        const tc = document.getElementById("tCost").value;
+        const ac = document.getElementById("aCost").value;
+        const ec = document.getElementById("eCost").value;        
+
+        document.getElementById("totalReq").value = +tc + +ac + +ec;
+    }
+
+</script>

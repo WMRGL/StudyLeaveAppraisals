@@ -1,0 +1,25 @@
+﻿@page
+@model ErrorModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1 class="text-danger">Error.</h1>
+<h2 class="text-danger">An error occurred while processing your request.</h2>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+    </p>
+}
+
+<h4>@Model.strError</h4>
+
+<p>Aren't you just glad of these incredibly useful and highly descriptive errors? I know I am!</p>
+
+<p>
+    Please submit a bug report, and include the
+    conditions that led you to this point - including exactly what you tried to do and with
+    what variables.
+</p>
