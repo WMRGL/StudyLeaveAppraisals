@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using StudyLeaveAppraisals.Data;
 using StudyLeaveAppraisals.Meta;
 using StudyLeaveAppraisals.Models;
+using System.Globalization;
 
 namespace StudyLeaveAppraisals.Pages.Appraisals
 {
@@ -10,16 +11,19 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
     {
         private readonly DataContext _context;
         private Metadata meta;
+        private PrintServices printer;
         public IndexModel(DataContext context)
         {
             _context = context;
             meta = new Metadata(_context);
+            printer = new PrintServices();
         }
 
         public List<StaffMembers> staffMembers { get; set; }
         public List<Appointments> appointments { get; set; }
         public List<Appointments> mdcs { get; set; }
         public List<Appointments> totalappts { get; set; }
+        public List<Appointments> apptsPerClinic { get; set; }        
         public string staffCode { get; set; }
         public string staffName { get; set; }
         public bool isSupervisor { get; set; }
@@ -33,6 +37,9 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
         public int iNotRecorded;
         public int iClinicsHeld;
         public int iTotalAppointments;
+
+        public bool isSuccess;
+        public string sMessage;
 
         [Authorize]
         public void OnGet(string? clinicianCode, DateTime? dStart, DateTime? dEnd)
@@ -67,11 +74,14 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 {
                     dEnd = DateTime.Now;
                 }
-
+                //Data
                 appointments = meta.GetAppointments(clinicianCode, dStart, dEnd);
                 mdcs = meta.GetMDC(clinicianCode, dStart, dEnd);
                 totalappts = appointments.Concat(mdcs).OrderBy(a => a.BOOKED_DATE).ThenBy(a => a.BOOKED_TIME).ToList();
+                
+                
 
+                //Numbers
                 startDate = dStart.GetValueOrDefault();
                 endDate = dEnd.GetValueOrDefault();
                 iPatientsSeen = totalappts.Where(a => a.Attendance == "Attended" && a.SeenBy == a.STAFF_CODE_1).Count();
@@ -81,15 +91,14 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 iNotRecorded = totalappts.Where(a => a.Attendance == "NOT RECORDED").Count();
                 iTotalAppointments = totalappts.Count();
                 iClinicsHeld = totalappts.DistinctBy(a => a.BOOKED_DATE).Count();
-
-                //totalappts = totalappts.GroupBy(a => a.BOOKED_DATE.Value.Month).SelectMany(gr => gr).ToList();
+                
             }
             catch (Exception ex)
             {
                 Response.Redirect("Error?sError=" + ex.Message);
             }
         }
-        public void OnPost(string? clinicianCode, DateTime? dStart, DateTime? dEnd)
+        public void OnPost(string? clinicianCode, DateTime? dStart, DateTime? dEnd, bool? isPrintReq = false)
         {
             try
             {
@@ -102,6 +111,8 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 totalappts = appointments.Concat(mdcs).OrderBy(a => a.BOOKED_DATE).ThenBy(a => a.BOOKED_TIME).ToList();
 
                 sClinCode = clinicianCode;
+                string sClinName = meta.GetStaffNameFromStaffCode(sClinCode);                
+                
                 startDate = dStart.GetValueOrDefault();
                 endDate = dEnd.GetValueOrDefault();
                 iPatientsSeen = totalappts.Where(a => a.Attendance == "Attended" && a.SeenBy == a.STAFF_CODE_1).Count();
@@ -111,11 +122,24 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 iNotRecorded = totalappts.Where(a => a.Attendance == "NOT RECORDED").Count();
                 iTotalAppointments = totalappts.Count();
                 iClinicsHeld = totalappts.DistinctBy(a => a.BOOKED_DATE).Count();
+
+                if (isPrintReq.GetValueOrDefault())
+                {
+                    printer.PrintReport(totalappts, sClinName, dStart, dEnd);
+                    //isSuccess = true;
+                    //sMessage = "The report has been saved to your C:\\CGU_DB folder.";
+                    
+                    Response.Redirect("Download?sClin=" + sClinName + "&dStart=" + dStart.Value.ToString("yyyy-MM-dd") + "&dEnd=" + dEnd.Value.ToString("yyyy-MM-dd"));
+                    
+                }
+
             }
             catch (Exception ex)
             {
                 Response.Redirect("Error?sError=" + ex.Message);
             }
         }
+
+        
     }
 }

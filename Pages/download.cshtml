@@ -1,0 +1,16 @@
+﻿@page
+@model StudyLeaveAppraisals.Pages.downloadModel
+@{
+}
+
+<a id="urllink" href="~/">@Model.dlFileName</a>
+
+<script>
+    window.addEventListener("load", URLRename);
+
+    function URLRename()
+    {       
+        document.getElementById("urllink").href = "@Model.dlFileName" + ".pdf";
+        //document.getElementById("urllink").href = "Martin_Loxton_2023-03-12_2024-03-11.pdf";
+    }
+</script>

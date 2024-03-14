@@ -3,6 +3,22 @@
 @{
 }
 <div class="container">
+
+    @if(Model.sMessage != null)
+    {
+        @if (!Model.isSuccess)
+        {
+            <div class="alert alert-danger" style="text-align:center">
+                @Model.sMessage
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-success" style="text-align:center">
+                @Model.sMessage
+            </div>
+        }
+    }
     <h1>Appraisal clinic data</h1>
     <form method="post">
         <div class="row mb-5 g-5">
@@ -39,9 +55,14 @@
         </div>
         <div class="row mb-5 g-5">
             <div class="col-md-4">
-                <input type="submit" class="btn btn-secondary" />
+                <input type="submit" asp-route-isPrintReq="false" class="btn btn-secondary" />
             </div>
-        </div>
+            <div class="col-md-6"></div>
+            <div class="col-md-2">
+                    @*<a class="btn btn-outline-primary" asp-page="PrintReport">Print Report</a>*@
+                <input type="submit" class="btn btn-outline-primary" asp-route-isPrintReq="true" value="Print Report" />
+            </div>
+        </div>        
     </form>
 
     <div class="row mb-4">
@@ -95,9 +116,8 @@
         </div>
         <div class="col-md-1">
             @Model.iTotalAppointments
-        </div>
-        
-    </div>
+        </div>  
+    </div>    
 
     <div class="row">
         <table class="table">

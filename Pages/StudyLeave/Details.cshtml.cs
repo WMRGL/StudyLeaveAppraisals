@@ -26,7 +26,7 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
         public string staffName { get; set; }
         public string staffCode { get; set; }
         public bool isSupervisor = false;
-        public string? Message;
+        public string? sMessage;
         public bool isSuccess = false;
 
         [Authorize]
@@ -64,12 +64,12 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
                 {
                     sql.ApproveStudyLeaveRequest(ID, sGranted, iTotalGranted, sFund, iFundYear, meta.GetStaffName(User.Identity.Name));
                     isSuccess = true;
-                    Message = "Saved!";
+                    sMessage = "Saved!";
                 }
                 else
                 {
                     isSuccess = false;
-                    Message = "Missing data, please correct.";
+                    sMessage = "Missing data, please correct.";
                 }
             }
             catch (Exception ex)

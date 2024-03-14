@@ -21,7 +21,7 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
         }
 
         public string staffName { get; set; }
-        public string? Message;
+        public string? sMessage;
         public bool isSuccess = false;
 
         [Authorize]
@@ -47,12 +47,12 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
                 {
                     sql.CreateNewStudyLeaveRequest(sEvent, dEventDate, iTravelCost, iAccomCost, iEventCost, iDays, iTotalReq, dDateRequested, meta.GetStaffCode(User.Identity.Name), meta.GetStaffName(User.Identity.Name));
                     isSuccess = true;
-                    Message = "Saved!";
+                    sMessage = "Saved!";
                 }
                 else
                 {                    
                     isSuccess = false;
-                    Message = "Missing data, please correct.";
+                    sMessage = "Missing data, please correct.";
                 }
             }
             catch (Exception ex)

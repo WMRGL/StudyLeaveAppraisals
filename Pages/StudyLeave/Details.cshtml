@@ -5,18 +5,18 @@
 
 <div class="container">
 
-    @if (Model.Message != null)
+    @if (Model.sMessage != null)
     {
         @if (!Model.isSuccess)
         {
             <div class="alert alert-danger" style="text-align:center">
-                @Model.Message
+                @Model.sMessage
             </div>
         }
         else
         {
             <div class="alert alert-success" style="text-align:center">
-                @Model.Message
+                @Model.sMessage
             </div>
         }
     }

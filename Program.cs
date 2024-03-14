@@ -5,7 +5,9 @@ using StudyLeaveAppraisals.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false).Build();
+var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile("secrets.json", optional: false)
+    .Build();
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(config.GetConnectionString("ConString")));
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
