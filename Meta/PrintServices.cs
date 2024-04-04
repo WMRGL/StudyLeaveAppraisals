@@ -19,7 +19,7 @@ namespace StudyLeaveAppraisals.Meta
         private readonly DataContext _context;
 
         public PrintServices() {}
-        public void PrintReport(List<Appointments> totalAppts, string? clinicianName, DateTime? dStart, DateTime? dEnd)
+        public void PrintReport(List<Appointments> totalAppts, string? clinicianName, DateTime? startDate, DateTime? endDate)
         {            
             PdfDocument document = new PdfDocument();
             document.Info.Title = "My PDF";
@@ -52,12 +52,12 @@ namespace StudyLeaveAppraisals.Meta
             monthsList = monthsList.Distinct().ToList();
 
             int para = 200;
-            int iAtt;
-            int iDNA;
-            int iCPat;
-            int iCPro;
-            int iNE;
-            int iTot;
+            int att;
+            int dna;
+            int cPat;
+            int cPro;
+            int ne;
+            int tot;
 
             tf.DrawString("Attendance by Month", fontBold, XBrushes.Black, new XRect(20, para, page.Width, 200));
             para = para + 30;
@@ -81,33 +81,33 @@ namespace StudyLeaveAppraisals.Meta
 
                 para = para + 15;
                 tf.DrawString(month, font, XBrushes.Black, new XRect(20, para, 100, 20));
-                iAtt = totalAppts.Where(a => Convert.ToDateTime(a.BOOKED_DATE).Month == iMonth & Convert.ToDateTime(a.BOOKED_DATE).Year == iYear & a.Attendance == "Attended" & a.SeenByClinician == clinicianName).Count();
-                tf.DrawString(iAtt.ToString(), font, XBrushes.Black, new XRect(220, para, 20, 20));
-                iDNA = totalAppts.Where(a => Convert.ToDateTime(a.BOOKED_DATE).Month == iMonth & Convert.ToDateTime(a.BOOKED_DATE).Year == iYear & a.Attendance.Contains("Did")).Count();
-                tf.DrawString(iDNA.ToString(), font, XBrushes.Black, new XRect(290, para, 20, 20));
-                iCPat = totalAppts.Where(a => Convert.ToDateTime(a.BOOKED_DATE).Month == iMonth & Convert.ToDateTime(a.BOOKED_DATE).Year == iYear & a.Attendance.Contains("patient")).Count();
-                tf.DrawString(iCPat.ToString(), font, XBrushes.Black, new XRect(360, para, 20, 20));
-                iCPro = totalAppts.Where(a => Convert.ToDateTime(a.BOOKED_DATE).Month == iMonth & Convert.ToDateTime(a.BOOKED_DATE).Year == iYear & a.Attendance.Contains("professional")).Count();
-                tf.DrawString(iCPro.ToString(), font, XBrushes.Black, new XRect(430, para, 20, 20));
-                iNE = totalAppts.Where(a => Convert.ToDateTime(a.BOOKED_DATE).Month == iMonth & Convert.ToDateTime(a.BOOKED_DATE).Year == iYear & a.Attendance.Contains("NOT")).Count();
-                tf.DrawString(iNE.ToString(), font, XBrushes.Black, new XRect(500, para, 20, 20));
-                iTot = totalAppts.Where(a => Convert.ToDateTime(a.BOOKED_DATE).Month == iMonth & Convert.ToDateTime(a.BOOKED_DATE).Year == iYear & (a.SeenByClinician == clinicianName || a.SeenByClinician == null)).Count();
-                tf.DrawString(iTot.ToString(), font, XBrushes.Black, new XRect(570, para, 20, 20));
+                att = totalAppts.Where(a => Convert.ToDateTime(a.BOOKED_DATE).Month == iMonth & Convert.ToDateTime(a.BOOKED_DATE).Year == iYear & a.Attendance == "Attended" & a.SeenByClinician == clinicianName).Count();
+                tf.DrawString(att.ToString(), font, XBrushes.Black, new XRect(220, para, 20, 20));
+                dna = totalAppts.Where(a => Convert.ToDateTime(a.BOOKED_DATE).Month == iMonth & Convert.ToDateTime(a.BOOKED_DATE).Year == iYear & a.Attendance.Contains("Did")).Count();
+                tf.DrawString(dna.ToString(), font, XBrushes.Black, new XRect(290, para, 20, 20));
+                cPat = totalAppts.Where(a => Convert.ToDateTime(a.BOOKED_DATE).Month == iMonth & Convert.ToDateTime(a.BOOKED_DATE).Year == iYear & a.Attendance.Contains("patient")).Count();
+                tf.DrawString(cPat.ToString(), font, XBrushes.Black, new XRect(360, para, 20, 20));
+                cPro = totalAppts.Where(a => Convert.ToDateTime(a.BOOKED_DATE).Month == iMonth & Convert.ToDateTime(a.BOOKED_DATE).Year == iYear & a.Attendance.Contains("professional")).Count();
+                tf.DrawString(cPro.ToString(), font, XBrushes.Black, new XRect(430, para, 20, 20));
+                ne = totalAppts.Where(a => Convert.ToDateTime(a.BOOKED_DATE).Month == iMonth & Convert.ToDateTime(a.BOOKED_DATE).Year == iYear & a.Attendance.Contains("NOT")).Count();
+                tf.DrawString(ne.ToString(), font, XBrushes.Black, new XRect(500, para, 20, 20));
+                tot = totalAppts.Where(a => Convert.ToDateTime(a.BOOKED_DATE).Month == iMonth & Convert.ToDateTime(a.BOOKED_DATE).Year == iYear & (a.SeenByClinician == clinicianName || a.SeenByClinician == null)).Count();
+                tf.DrawString(tot.ToString(), font, XBrushes.Black, new XRect(570, para, 20, 20));
             }
             para = para + 15;
             tf.DrawString("Grand Totals", fontSmall, XBrushes.Black, new XRect(20, para, 20, 40));
-            iAtt = totalAppts.Where(a => a.Attendance == "Attended" & a.SeenByClinician == clinicianName).Count();
-            tf.DrawString(iAtt.ToString(), font, XBrushes.Black, new XRect(220, para, 20, 20));
-            iDNA = totalAppts.Where(a => a.Attendance.Contains("Did")).Count();
-            tf.DrawString(iDNA.ToString(), font, XBrushes.Black, new XRect(290, para, 20, 20));
-            iCPat = totalAppts.Where(a => a.Attendance.Contains("patient")).Count();
-            tf.DrawString(iCPat.ToString(), font, XBrushes.Black, new XRect(360, para, 20, 20));
-            iCPro = totalAppts.Where(a => a.Attendance.Contains("professional")).Count();
-            tf.DrawString(iCPro.ToString(), font, XBrushes.Black, new XRect(430, para, 20, 20));
-            iNE = totalAppts.Where(a => a.Attendance.Contains("NOT")).Count();
-            tf.DrawString(iNE.ToString(), font, XBrushes.Black, new XRect(500, para, 20, 20));
-            iTot = totalAppts.Where(a => a.SeenByClinician == clinicianName || a.SeenByClinician == null).Count();
-            tf.DrawString(iTot.ToString(), font, XBrushes.Black, new XRect(570, para, 20, 20));
+            att = totalAppts.Where(a => a.Attendance == "Attended" & a.SeenByClinician == clinicianName).Count();
+            tf.DrawString(att.ToString(), font, XBrushes.Black, new XRect(220, para, 20, 20));
+            dna = totalAppts.Where(a => a.Attendance.Contains("Did")).Count();
+            tf.DrawString(dna.ToString(), font, XBrushes.Black, new XRect(290, para, 20, 20));
+            cPat = totalAppts.Where(a => a.Attendance.Contains("patient")).Count();
+            tf.DrawString(cPat.ToString(), font, XBrushes.Black, new XRect(360, para, 20, 20));
+            cPro = totalAppts.Where(a => a.Attendance.Contains("professional")).Count();
+            tf.DrawString(cPro.ToString(), font, XBrushes.Black, new XRect(430, para, 20, 20));
+            ne = totalAppts.Where(a => a.Attendance.Contains("NOT")).Count();
+            tf.DrawString(ne.ToString(), font, XBrushes.Black, new XRect(500, para, 20, 20));
+            tot = totalAppts.Where(a => a.SeenByClinician == clinicianName || a.SeenByClinician == null).Count();
+            tf.DrawString(tot.ToString(), font, XBrushes.Black, new XRect(570, para, 20, 20));
 
             para = para + 50;
 
@@ -128,37 +128,37 @@ namespace StudyLeaveAppraisals.Meta
             {
                 para = para + 15;
                 tf.DrawString(c, font, XBrushes.Black, new XRect(20, para, 400, 20));
-                iAtt = totalAppts.Where(a => a.Clinic == c & a.Attendance == "Attended" & a.SeenByClinician == clinicianName).Count();
-                tf.DrawString(iAtt.ToString(), font, XBrushes.Black, new XRect(220, para, 20, 20));
-                iDNA = totalAppts.Where(a => a.Clinic == c & a.Attendance.Contains("Did")).Count();
-                tf.DrawString(iDNA.ToString(), font, XBrushes.Black, new XRect(290, para, 20, 20));
-                iCPat = totalAppts.Where(a => a.Clinic == c & a.Attendance.Contains("patient")).Count();
-                tf.DrawString(iCPat.ToString(), font, XBrushes.Black, new XRect(360, para, 20, 20));
-                iCPro = totalAppts.Where(a => a.Clinic == c & a.Attendance.Contains("professional")).Count();
-                tf.DrawString(iCPro.ToString(), font, XBrushes.Black, new XRect(430, para, 20, 20));
-                iNE = totalAppts.Where(a => a.Clinic == c & a.Attendance.Contains("NOT")).Count();
-                tf.DrawString(iNE.ToString(), font, XBrushes.Black, new XRect(500, para, 20, 20));
-                iTot = totalAppts.Where(a => a.Clinic == c & (a.SeenByClinician == clinicianName || a.SeenByClinician == null)).Count();
-                tf.DrawString(iTot.ToString(), font, XBrushes.Black, new XRect(570, para, 20, 20));
+                att = totalAppts.Where(a => a.Clinic == c & a.Attendance == "Attended" & a.SeenByClinician == clinicianName).Count();
+                tf.DrawString(att.ToString(), font, XBrushes.Black, new XRect(220, para, 20, 20));
+                dna = totalAppts.Where(a => a.Clinic == c & a.Attendance.Contains("Did")).Count();
+                tf.DrawString(dna.ToString(), font, XBrushes.Black, new XRect(290, para, 20, 20));
+                cPat = totalAppts.Where(a => a.Clinic == c & a.Attendance.Contains("patient")).Count();
+                tf.DrawString(cPat.ToString(), font, XBrushes.Black, new XRect(360, para, 20, 20));
+                cPro = totalAppts.Where(a => a.Clinic == c & a.Attendance.Contains("professional")).Count();
+                tf.DrawString(cPro.ToString(), font, XBrushes.Black, new XRect(430, para, 20, 20));
+                ne = totalAppts.Where(a => a.Clinic == c & a.Attendance.Contains("NOT")).Count();
+                tf.DrawString(ne.ToString(), font, XBrushes.Black, new XRect(500, para, 20, 20));
+                tot = totalAppts.Where(a => a.Clinic == c & (a.SeenByClinician == clinicianName || a.SeenByClinician == null)).Count();
+                tf.DrawString(tot.ToString(), font, XBrushes.Black, new XRect(570, para, 20, 20));
             }
 
             para = para + 15;
             tf.DrawString("Grand Totals", fontSmall, XBrushes.Black, new XRect(20, para, 20, 40));
-            iAtt = totalAppts.Where(a => a.Attendance == "Attended" & a.SeenByClinician == clinicianName).Count();
-            tf.DrawString(iAtt.ToString(), font, XBrushes.Black, new XRect(220, para, 20, 20));
-            iDNA = totalAppts.Where(a => a.Attendance.Contains("Did")).Count();
-            tf.DrawString(iDNA.ToString(), font, XBrushes.Black, new XRect(290, para, 20, 20));
-            iCPat = totalAppts.Where(a => a.Attendance.Contains("patient")).Count();
-            tf.DrawString(iCPat.ToString(), font, XBrushes.Black, new XRect(360, para, 20, 20));
-            iCPro = totalAppts.Where(a => a.Attendance.Contains("professional")).Count();
-            tf.DrawString(iCPro.ToString(), font, XBrushes.Black, new XRect(430, para, 20, 20));
-            iNE = totalAppts.Where(a => a.Attendance.Contains("NOT")).Count();
-            tf.DrawString(iNE.ToString(), font, XBrushes.Black, new XRect(500, para, 20, 20));
-            iTot = totalAppts.Where(a => a.SeenByClinician == clinicianName || a.SeenByClinician == null).Count();
-            tf.DrawString(iTot.ToString(), font, XBrushes.Black, new XRect(570, para, 20, 20));
+            att = totalAppts.Where(a => a.Attendance == "Attended" & a.SeenByClinician == clinicianName).Count();
+            tf.DrawString(att.ToString(), font, XBrushes.Black, new XRect(220, para, 20, 20));
+            dna = totalAppts.Where(a => a.Attendance.Contains("Did")).Count();
+            tf.DrawString(dna.ToString(), font, XBrushes.Black, new XRect(290, para, 20, 20));
+            cPat = totalAppts.Where(a => a.Attendance.Contains("patient")).Count();
+            tf.DrawString(cPat.ToString(), font, XBrushes.Black, new XRect(360, para, 20, 20));
+            cPro = totalAppts.Where(a => a.Attendance.Contains("professional")).Count();
+            tf.DrawString(cPro.ToString(), font, XBrushes.Black, new XRect(430, para, 20, 20));
+            ne = totalAppts.Where(a => a.Attendance.Contains("NOT")).Count();
+            tf.DrawString(ne.ToString(), font, XBrushes.Black, new XRect(500, para, 20, 20));
+            tot = totalAppts.Where(a => a.SeenByClinician == clinicianName || a.SeenByClinician == null).Count();
+            tf.DrawString(tot.ToString(), font, XBrushes.Black, new XRect(570, para, 20, 20));
 
-            string fileName = "wwwroot\\" + clinicianName.Replace(" ", "_") + "_" + dStart.Value.ToString("yyyy-MM-dd") + "_" + dEnd.Value.ToString("yyyy-MM-dd") + ".pdf";
-            string fileNameLocal = @"C:\CGU_DB\" + clinicianName + " " + dStart.Value.ToString("yyyy-MM-dd") + " to " + dEnd.Value.ToString("yyyy-MM-dd") + ".pdf";
+            string fileName = "wwwroot\\" + clinicianName.Replace(" ", "_") + "_" + startDate.Value.ToString("yyyy-MM-dd") + "_" + endDate.Value.ToString("yyyy-MM-dd") + ".pdf";
+            string fileNameLocal = @"C:\CGU_DB\" + clinicianName + " " + startDate.Value.ToString("yyyy-MM-dd") + " to " + endDate.Value.ToString("yyyy-MM-dd") + ".pdf";
             document.Save(fileName);
             
             

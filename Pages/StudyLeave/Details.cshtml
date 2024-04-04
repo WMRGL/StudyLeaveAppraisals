@@ -5,18 +5,18 @@
 
 <div class="container">
 
-    @if (Model.sMessage != null)
+    @if (Model.Message != null)
     {
         @if (!Model.isSuccess)
         {
             <div class="alert alert-danger" style="text-align:center">
-                @Model.sMessage
+                @Model.Message
             </div>
         }
         else
         {
             <div class="alert alert-success" style="text-align:center">
-                @Model.sMessage
+                @Model.Message
             </div>
         }
     }
@@ -107,7 +107,7 @@
                     <label>Grant request:</label>
                 </div>
                 <div class="col-md-10">
-                    <select name="sGranted">
+                    <select name="granted" asp-for=@Model.Request.Granted>
                         <option selected value="Pending">Pending</option>
                         <option value="Yes">Yes</option>
                         <option value="No">No</option>
@@ -123,7 +123,7 @@
                     <label>Total Granted (£):</label>
                 </div>
                 <div class="col-md-2">
-                    <input class="w-75" name="iTotalGranted" id="iTotal" />                     
+                    <input class="w-75" name="totalGranted" id="iTotal" asp-for=@Model.Request.TotalGranted />                     
                 </div>
                 <div class="col-md-1">
                     <button type="button" class="btn btn-outline-primary" style="font-size:small" onclick="SetDefaultAmount()">Set To Requested Amount</button>
@@ -132,7 +132,7 @@
                     <label>Fund:</label>
                 </div>
                 <div class="col-md-3">
-                    <select name="sFund">
+                    <select name="Fund" asp-for=@Model.Request.Fund>
                         <option value="" selected>...select</option>
                         @foreach(var f in Model.Funds)
                         {

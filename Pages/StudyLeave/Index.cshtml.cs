@@ -9,12 +9,12 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
     public class IndexModel : PageModel
     {
         private readonly DataContext _context;
-        public Metadata meta;
+        private readonly Metadata _meta;
 
         public IndexModel(DataContext context)
         {
             _context = context;
-            meta = new Metadata(_context);
+            _meta = new Metadata(_context);
         }
 
         public List<StudyLeaveRequests> MyRequests { get; set; }
@@ -35,14 +35,14 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
                 }
                 else
                 {
-                    staffName = meta.GetStaffName(User.Identity.Name);
-                    staffCode = meta.GetStaffCode(User.Identity.Name);                    
-                    isSupervisor = meta.GetIsGCSupervisor(staffCode);
-                    ListFunds = meta.GetFunds();
-                    MyRequests = meta.GetMyRequests(staffCode);
+                    staffName = _meta.GetStaffName(User.Identity.Name);
+                    staffCode = _meta.GetStaffCode(User.Identity.Name);                    
+                    isSupervisor = _meta.GetIsGCSupervisor(staffCode);
+                    ListFunds = _meta.GetFunds();
+                    MyRequests = _meta.GetMyRequests(staffCode);
                     if (isSupervisor)
                     {
-                        AllRequests = meta.GetOtherRequests(staffCode);
+                        AllRequests = _meta.GetOtherRequests(staffCode);
                     }
 
                 }

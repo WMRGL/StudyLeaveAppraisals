@@ -12,35 +12,35 @@ namespace StudyLeaveAppraisals.Meta
             _config = config;
         }
 
-        private string strSQL = "";
+        private string sql = "";
 
-        private void DoSQLCommand(string strSQL)
+        private void DoSQLCommand(string sql)
         {
             SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
-            SqlCommand cmd = new SqlCommand(strSQL, con);
+            SqlCommand cmd = new SqlCommand(sql, con);
             con.Open();
             cmd.ExecuteNonQuery();
             con.Close();
         }
 
-        public void CreateNewStudyLeaveRequest(string sEvent, DateTime dEventDate, int iTravelCost, int iAccomCost, int iEventCost, int iDays, int iTotalReq, DateTime dDateRequested, string sStaffCode, string sReqName)
+        public void CreateNewStudyLeaveRequest(string eventName, DateTime eventDate, int travelCost, int accomCost, int eventCost, int days, int totalReq, DateTime dateRequested, string staffCode, string reqName)
         {
-            strSQL = "insert into StudyLeaveRequests (event, dateofevent, costtravel, costaccomodation, " +
+            sql = "insert into StudyLeaveRequests (event, dateofevent, costtravel, costaccomodation, " +
                 "costevent, duration, totalrequested, daterequested, staffcode, requestername, Granted) values (' "
-                + sEvent + "', '" + dEventDate.ToString("yyyy-MM-dd") + "', " + iTravelCost + ", " + iAccomCost + ", "
-                + iEventCost + ", " + iDays + ", " + iTotalReq + ", '" + dDateRequested.ToString("yyyy-MM-dd") + "', '" 
-                + sStaffCode +  "', '" + sReqName + "', 'Pending')";
+                + eventName + "', '" + eventDate.ToString("yyyy-MM-dd") + "', " + travelCost + ", " + accomCost + ", "
+                + eventCost + ", " + days + ", " + totalReq + ", '" + dateRequested.ToString("yyyy-MM-dd") + "', '" 
+                + staffCode +  "', '" + reqName + "', 'Pending')";
 
-            DoSQLCommand(strSQL);
+            DoSQLCommand(sql);
         }
 
-        public void ApproveStudyLeaveRequest(int ID, string sGranted, int iTotalGranted, string sFund, int iFundYear, string sGrantedBy) 
+        public void ApproveStudyLeaveRequest(int id, string granted, int totalGranted, string fund, int fundYear, string grantedBy) 
         {
-            strSQL = "update StudyLeaveRequests set Granted='" + sGranted + "', GrantedBy='" + sGrantedBy + 
-                "', GrantedDate='" + DateTime.Now.ToString("yyyy-MM-dd") + "', TotalGranted=" + iTotalGranted + 
-                ", Fund='" + sFund + "', FundYear=" + iFundYear + " where ID = " + ID;
+            sql = "update StudyLeaveRequests set Granted='" + granted + "', GrantedBy='" + grantedBy + 
+                "', GrantedDate='" + DateTime.Now.ToString("yyyy-MM-dd") + "', TotalGranted=" + totalGranted + 
+                ", Fund='" + fund + "', FundYear=" + fundYear + " where ID = " + id;
             
-            DoSQLCommand(strSQL);
+            DoSQLCommand(sql);
         }
     }
 }

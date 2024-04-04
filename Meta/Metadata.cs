@@ -24,9 +24,9 @@ namespace StudyLeaveAppraisals.Meta
             return staffName;
         }
 
-        public string GetStaffNameFromStaffCode(string sStaffCode)
+        public string GetStaffNameFromStaffCode(string staffCode)
         {
-            string staffName = _context.StaffMembers.FirstOrDefault(s => s.STAFF_CODE == sStaffCode).NAME;
+            string staffName = _context.StaffMembers.FirstOrDefault(s => s.STAFF_CODE == staffCode).NAME;
             return staffName;
         }
 
@@ -51,9 +51,9 @@ namespace StudyLeaveAppraisals.Meta
             return req.ToList();
         }
 
-        public StudyLeaveRequests GetRequestDetails(int ID)
+        public StudyLeaveRequests GetRequestDetails(int id)
         {
-            var req = _context.StudyLeaveRequests.FirstOrDefault(r => r.ID == ID);
+            var req = _context.StudyLeaveRequests.FirstOrDefault(r => r.ID == id);
 
             return req;
         }
@@ -65,42 +65,42 @@ namespace StudyLeaveAppraisals.Meta
             return staff.ToList();
         }
 
-        public List<Appointments> GetAppointments(string staffCode, DateTime? dStart, DateTime? dEnd)
+        public List<Appointments> GetAppointments(string staffCode, DateTime? startDate, DateTime? endDate)
         {            
             var apt = _context.Appointments.Where(a => (a.STAFF_CODE_1 == staffCode ||
                                                     a.STAFF_CODE_2 == staffCode ||
                                                     a.STAFF_CODE_3 == staffCode)
                                                     & a.AppType.Contains("app"));
 
-            apt = apt.Where(a => a.BOOKED_DATE > dStart);
-            apt = apt.Where(a => a.BOOKED_DATE < dEnd);
+            apt = apt.Where(a => a.BOOKED_DATE > startDate);
+            apt = apt.Where(a => a.BOOKED_DATE < endDate);
 
             return apt.ToList();
         }
 
-        public List<Appointments> GetMDC(string staffCode, DateTime? dStart, DateTime? dEnd)
+        public List<Appointments> GetMDC(string staffCode, DateTime? startDate, DateTime? endDate)
         {            
             var apt = _context.Appointments.Where(a => (a.STAFF_CODE_1 == staffCode ||
                                                     a.STAFF_CODE_2 == staffCode ||
                                                     a.STAFF_CODE_3 == staffCode)
                                                     & a.AppType.Contains("MD"));
 
-            apt = apt.Where(a => a.BOOKED_DATE > dStart);
-            apt = apt.Where(a => a.BOOKED_DATE < dEnd);
+            apt = apt.Where(a => a.BOOKED_DATE > startDate);
+            apt = apt.Where(a => a.BOOKED_DATE < endDate);
 
             return apt.ToList();
         }
 
-        public List<Appointments> GetAppointmentsByClinic(string staffCode, string sClinic, DateTime? dStart, DateTime? dEnd)
+        public List<Appointments> GetAppointmentsByClinic(string staffCode, string clinic, DateTime? startDate, DateTime? endDate)
         {
             var apt = _context.Appointments.Where(a => (a.STAFF_CODE_1 == staffCode ||
                                                     a.STAFF_CODE_2 == staffCode ||
                                                     a.STAFF_CODE_3 == staffCode)
                                                     & (a.AppType.Contains("app") || a.AppType.Contains("MD"))
-                                                    & a.Clinic == sClinic);
+                                                    & a.Clinic == clinic);
 
-            apt = apt.Where(a => a.BOOKED_DATE > dStart);
-            apt = apt.Where(a => a.BOOKED_DATE < dEnd);
+            apt = apt.Where(a => a.BOOKED_DATE > startDate);
+            apt = apt.Where(a => a.BOOKED_DATE < endDate);
 
             return apt.ToList();
         }
@@ -112,27 +112,27 @@ namespace StudyLeaveAppraisals.Meta
                                                     a.STAFF_CODE_3 == staffCode)
                                                     & (a.AppType.Contains("app") || a.AppType.Contains("MD")));
 
-            DateTime dStart = DateTime.Parse(year + "-" + month  + "-" + 1);
-            DateTime dEnd = DateTime.Parse(year + "-" + (month+1) + "-" + 1);
+            DateTime startDate = DateTime.Parse(year + "-" + month  + "-" + 1);
+            DateTime endDate = DateTime.Parse(year + "-" + (month+1) + "-" + 1);
 
-            apt = apt.Where(a => a.BOOKED_DATE >= dStart);
-            apt = apt.Where(a => a.BOOKED_DATE < dEnd);
+            apt = apt.Where(a => a.BOOKED_DATE >= startDate);
+            apt = apt.Where(a => a.BOOKED_DATE < endDate);
 
             return apt.ToList();
         }
 
 
-        public bool GetIsGCSupervisor(string sStaffCode)
+        public bool GetIsGCSupervisor(string staffCode)
         {
-            var sup = _context.Supervisors.Where(s => s.StaffCode == sStaffCode && s.isGCSupervisor == true).ToList();
+            var sup = _context.Supervisors.Where(s => s.StaffCode == staffCode && s.isGCSupervisor == true).ToList();
             if (sup.Count > 0) return true;
 
             return false;
         }
 
-        public bool GetIsConsSupervisor(string sStaffCode)
+        public bool GetIsConsSupervisor(string staffCode)
         {
-            var sup = _context.Supervisors.Where(s => s.StaffCode == sStaffCode && s.isConsSupervisor == true).ToList();
+            var sup = _context.Supervisors.Where(s => s.StaffCode == staffCode && s.isConsSupervisor == true).ToList();
             if (sup.Count > 0) return true;
 
             return false;

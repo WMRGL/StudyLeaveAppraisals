@@ -8,12 +8,12 @@ namespace StudyLeaveAppraisals.Pages
     public class IndexModel : PageModel
     {
         private readonly DataContext _context;
-        public Metadata meta;
+        private readonly Metadata _meta;
 
         public IndexModel(DataContext context)
         {
             _context = context;
-            meta = new Metadata(_context);
+            _meta = new Metadata(_context);
         }
 
         public string staffCode { get; set; }
@@ -33,9 +33,9 @@ namespace StudyLeaveAppraisals.Pages
                 }
                 else
                 {
-                    staffName = meta.GetStaffName(User.Identity.Name);
-                    staffCode = meta.GetStaffCode(User.Identity.Name);                    
-                    //isSupervisor = meta.GetIsSupervisor(staffCode);
+                    staffName = _meta.GetStaffName(User.Identity.Name);
+                    staffCode = _meta.GetStaffCode(User.Identity.Name);                    
+                    //isSupervisor = _meta.GetIsSupervisor(staffCode);
                 }
 
             }

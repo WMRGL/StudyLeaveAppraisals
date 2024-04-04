@@ -9,19 +9,19 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        public Metadata meta;
-        public DoSQL sql;
+        private readonly Metadata _meta;
+        private readonly DoSQL _sql;
         public CreateNewModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            meta = new Metadata(_context);
-            sql = new DoSQL(_config);
+            _meta = new Metadata(_context);
+            _sql = new DoSQL(_config);
             _config = config;
         }
 
         public string staffName { get; set; }
-        public string? sMessage;
+        public string? Message;
         public bool isSuccess = false;
 
         [Authorize]
@@ -29,7 +29,7 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
         {
             try
             {
-                staffName = meta.GetStaffName(User.Identity.Name);
+                staffName = _meta.GetStaffName(User.Identity.Name);
             }
             catch (Exception ex)
             {
@@ -37,22 +37,22 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
             }
         }
 
-        public void OnPost(string sEvent, DateTime dEventDate, int iTravelCost, int iAccomCost, int iEventCost, int iDays, int iTotalReq, DateTime dDateRequested)
+        public void OnPost(string eventName, DateTime eventDate, int travelCost, int accomCost, int eventCost, int days, int totalReq, DateTime dateRequested)
         {
             try
             {
-                staffName = meta.GetStaffName(User.Identity.Name);
-                if (sEvent != null & dEventDate != DateTime.MinValue & iTravelCost != null & iAccomCost != null & iEventCost != null & iDays != null &
-                    iTotalReq != null & dDateRequested != DateTime.MinValue)
+                staffName = _meta.GetStaffName(User.Identity.Name);
+                if (eventName != null & eventDate != DateTime.MinValue & travelCost != null & accomCost != null & eventCost != null & days != null &
+                    totalReq != null & dateRequested != DateTime.MinValue)
                 {
-                    sql.CreateNewStudyLeaveRequest(sEvent, dEventDate, iTravelCost, iAccomCost, iEventCost, iDays, iTotalReq, dDateRequested, meta.GetStaffCode(User.Identity.Name), meta.GetStaffName(User.Identity.Name));
+                    _sql.CreateNewStudyLeaveRequest(eventName, eventDate, travelCost, accomCost, eventCost, days, totalReq, dateRequested, _meta.GetStaffCode(User.Identity.Name), _meta.GetStaffName(User.Identity.Name));
                     isSuccess = true;
-                    sMessage = "Saved!";
+                    Message = "Saved!";
                 }
                 else
                 {                    
                     isSuccess = false;
-                    sMessage = "Missing data, please correct.";
+                    Message = "Missing data, please correct.";
                 }
             }
             catch (Exception ex)

@@ -16,18 +16,18 @@
         </div>
     </div>
 
-    @if(Model.sMessage != null)
+    @if(Model.Message != null)
     {
         @if (!Model.isSuccess)
         {
             <div class="alert alert-danger" style="text-align:center">
-                @Model.sMessage
+                @Model.Message
             </div>
         }
         else
         {
             <div class="alert alert-success" style="text-align:center">
-                @Model.sMessage
+                @Model.Message
             </div>
         }
     }
@@ -38,13 +38,13 @@
                 <label>Event Name:</label>
             </div>
             <div class="col-md-4">
-                <input name="sEvent" />
+                <input name="eventName" />
             </div>
             <div class="col-md-2">
                 <label>Date of Event:</label>
             </div>
             <div class="col-md-4">
-                <input type="date" name="dEventDate" />
+                <input type="date" name="eventDate" />
             </div>
         </div>
         <div class="row mb-5 g-5">
@@ -52,25 +52,25 @@
                 <label>Travel Cost (£):</label>
             </div>
             <div class="col-md-1">
-                <input class="w-75" name="iTravelCost" id="tCost" />
+                <input class="w-75" name="travelCost" id="tCost" />
             </div>
             <div class="col-md-2">
                 <label>Accomodation Cost (£):</label>
             </div>
             <div class="col-md-1">
-                <input class="w-75" name="iAccomCost" id="aCost" />
+                <input class="w-75" name="accomCost" id="aCost" />
             </div>
             <div class="col-md-2">
                 <label>Event Cost (£):</label>
             </div>
             <div class="col-md-1">
-                <input class="w-75" name="iEventCost" id="eCost" />
+                <input class="w-75" name="eventCost" id="eCost" />
             </div>
             <div class="col-md-2">
                 <label>Duration (days):</label>
             </div>
             <div class="col-md-1">
-                <input class="w-75" name="iDays" />
+                <input class="w-75" name="days" />
             </div>
         </div>
         <div class="row mb-5 g-5">
@@ -78,7 +78,7 @@
                 <label>Total Requested (£):</label>
             </div>
             <div class="col-md-1">
-                <input id="totalReq" class="w-75" name="iTotalReq" />
+                <input id="totalReq" class="w-75" name="totalReq" />
             </div>
             <div class="col-md-1">
                 <button type="button" class="btn btn-outline-primary" style="font-size:small" onclick="AutoCalculate()">Auto-Calculate</button>
@@ -87,7 +87,7 @@
                 <label>Date Requested:</label>
             </div>
             <div class="col-md-5">
-                <input type="date" name="dDateRequested" />
+                <input type="date" name="dateRequested" />
             </div>
         </div>
 

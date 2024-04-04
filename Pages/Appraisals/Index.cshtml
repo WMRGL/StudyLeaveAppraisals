@@ -4,18 +4,18 @@
 }
 <div class="container">
 
-    @if(Model.sMessage != null)
+    @if(Model.Message != null)
     {
         @if (!Model.isSuccess)
         {
             <div class="alert alert-danger" style="text-align:center">
-                @Model.sMessage
+                @Model.Message
             </div>
         }
         else
         {
             <div class="alert alert-success" style="text-align:center">
-                @Model.sMessage
+                @Model.Message
             </div>
         }
     }
@@ -31,7 +31,7 @@
             <div class="col-md-4">
                 @if(Model.isSupervisor)
                 {
-                    <select name="clinicianCode" asp-for="sClinCode">
+                    <select name="clinicianCode" asp-for="clinCode">
                         <option value="" selected>...Select</option>
                         @foreach(var s in Model.staffMembers)
                         {
@@ -44,13 +44,13 @@
                 <label>From:</label>
             </div>
             <div class="col-md-2">
-                <input type="date" name="dStart" asp-for="startDate" />
+                <input type="date" name="startDate" asp-for="startDate" />
             </div>
             <div class="col-md-1">
                 <label>To:</label>
             </div>
             <div class="col-md-2">
-                <input type="date" name="dEnd" asp-for="endDate" />
+                <input type="date" name="endDate" asp-for="endDate" />
             </div>
         </div>
         <div class="row mb-5 g-5">
@@ -70,7 +70,7 @@
             <label>Clinics held in period:</label>
         </div>
         <div class="col-md-1">
-            @Model.iClinicsHeld
+            @Model.clinicsHeld
         </div>        
         
     </div>
@@ -80,19 +80,19 @@
             <label>Patients seen:</label>
         </div>
         <div class="col-md-1">
-            @Model.iPatientsSeen
+            @Model.patientsSeen
         </div>
         <div class="col-md-2">
             <label>DNAs:</label>
         </div>
         <div class="col-md-1">
-            @Model.iDNAs
+            @Model.dnas
         </div>
         <div class="col-md-2">
             <label>Cancellations:</label>
         </div>
         <div class="col-md-1">
-            @Model.iCancellations
+            @Model.cancellations
         </div>        
     </div>
     <div class="row mb-4">
@@ -100,13 +100,13 @@
             <label>Not Recorded:</label>
         </div>
         <div class="col-md-1">
-            @Model.iNotRecorded
+            @Model.notRecorded
         </div>    
         <div class="col-md-2">
             <label>Seen By Another Clinician:</label>
         </div>
         <div class="col-md-1">
-            @Model.iPatientsSeenByAnother
+            @Model.patientsSeenByAnother
         </div>
     </div>
         
@@ -115,7 +115,7 @@
             <label>Total Appointments:</label>
         </div>
         <div class="col-md-1">
-            @Model.iTotalAppointments
+            @Model.totalAppointments
         </div>  
     </div>    
 

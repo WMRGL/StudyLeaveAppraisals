@@ -10,14 +10,14 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        public Metadata meta;
-        public DoSQL sql;
+        private readonly Metadata _meta;
+        private readonly DoSQL _sql;
         public DetailsModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            meta = new Metadata(_context);
-            sql = new DoSQL(_config);
+            _meta = new Metadata(_context);
+            _sql = new DoSQL(_config);
             _config = config;
         }
 
@@ -26,7 +26,7 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
         public string staffName { get; set; }
         public string staffCode { get; set; }
         public bool isSupervisor = false;
-        public string? sMessage;
+        public string? Message;
         public bool isSuccess = false;
 
         [Authorize]
@@ -34,15 +34,15 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
         {
             try
             {
-                staffName = meta.GetStaffName(User.Identity.Name);
-                staffCode = meta.GetStaffCode(User.Identity.Name);
-                //if (meta.supervisorStaffCodes.Contains(staffCode))
+                staffName = _meta.GetStaffName(User.Identity.Name);
+                staffCode = _meta.GetStaffCode(User.Identity.Name);
+                //if (_meta.supervisorStaffCodes.Contains(staffCode))
                 //{
                 //    isSupervisor = true;
                 //}
-                isSupervisor = meta.GetIsGCSupervisor(staffCode);
-                Request = meta.GetRequestDetails(ID);
-                Funds = meta.GetFunds();
+                isSupervisor = _meta.GetIsGCSupervisor(staffCode);
+                Request = _meta.GetRequestDetails(ID);
+                Funds = _meta.GetFunds();
             }
             catch (Exception ex)
             {
@@ -50,26 +50,26 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
             }
         }
 
-        public void OnPost(int ID, string sStaffCode, string sGranted, int iTotalGranted, string sFund, int iFundYear)
+        public void OnPost(int id, string granted, int totalGranted, string fund, int fundYear)
         {
             try
             {
-                staffName = meta.GetStaffName(User.Identity.Name);
-                staffCode = meta.GetStaffCode(User.Identity.Name);                
-                isSupervisor = meta.GetIsGCSupervisor(staffCode);
-                Request = meta.GetRequestDetails(ID);
-                Funds = meta.GetFunds();
+                staffName = _meta.GetStaffName(User.Identity.Name);
+                staffCode = _meta.GetStaffCode(User.Identity.Name);                
+                isSupervisor = _meta.GetIsGCSupervisor(staffCode);
+                Request = _meta.GetRequestDetails(id);
+                Funds = _meta.GetFunds();
 
-                if (sGranted != null & iTotalGranted != null & sFund != null & iFundYear != null)
+                if (granted != null & totalGranted != null & fund != null & fundYear != null)
                 {
-                    sql.ApproveStudyLeaveRequest(ID, sGranted, iTotalGranted, sFund, iFundYear, meta.GetStaffName(User.Identity.Name));
+                    _sql.ApproveStudyLeaveRequest(id, granted, totalGranted, fund, fundYear, _meta.GetStaffName(User.Identity.Name));
                     isSuccess = true;
-                    sMessage = "Saved!";
+                    Message = "Saved!";
                 }
                 else
                 {
                     isSuccess = false;
-                    sMessage = "Missing data, please correct.";
+                    Message = "Missing data, please correct.";
                 }
             }
             catch (Exception ex)

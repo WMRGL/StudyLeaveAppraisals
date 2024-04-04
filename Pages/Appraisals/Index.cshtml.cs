@@ -10,12 +10,12 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
     public class IndexModel : PageModel
     {
         private readonly DataContext _context;
-        private Metadata meta;
-        private PrintServices printer;
+        private readonly Metadata _meta;
+        private readonly PrintServices printer;
         public IndexModel(DataContext context)
         {
             _context = context;
-            meta = new Metadata(_context);
+            _meta = new Metadata(_context);
             printer = new PrintServices();
         }
 
@@ -27,22 +27,22 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
         public string staffCode { get; set; }
         public string staffName { get; set; }
         public bool isSupervisor { get; set; }
-        public string sClinCode;
+        public string clinCode;
         public DateTime startDate;
         public DateTime endDate;
-        public int iPatientsSeen;
-        public int iPatientsSeenByAnother;
-        public int iCancellations;
-        public int iDNAs;
-        public int iNotRecorded;
-        public int iClinicsHeld;
-        public int iTotalAppointments;
+        public int patientsSeen;
+        public int patientsSeenByAnother;
+        public int cancellations;
+        public int dnas;
+        public int notRecorded;
+        public int clinicsHeld;
+        public int totalAppointments;
 
         public bool isSuccess;
-        public string sMessage;
+        public string Message;
 
         [Authorize]
-        public void OnGet(string? clinicianCode, DateTime? dStart, DateTime? dEnd)
+        public void OnGet(string? clinicianCode, DateTime? startDate, DateTime? endDate)
         {
             try
             {
@@ -53,9 +53,9 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 }
                 else
                 {
-                    staffName = meta.GetStaffName(User.Identity.Name);
-                    staffCode = meta.GetStaffCode(User.Identity.Name);                    
-                    isSupervisor = meta.GetIsConsSupervisor(staffCode);
+                    staffName = _meta.GetStaffName(User.Identity.Name);
+                    staffCode = _meta.GetStaffCode(User.Identity.Name);                    
+                    isSupervisor = _meta.GetIsConsSupervisor(staffCode);
                 }
 
                 if(clinicianCode == null)
@@ -63,34 +63,34 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                     clinicianCode = staffCode;
                 }
 
-                staffMembers = meta.GetStaffMembers();
+                staffMembers = _meta.GetStaffMembers();
                 
-                sClinCode = clinicianCode;
-                if (dStart == null)
+                clinCode = clinicianCode;
+                if (startDate == null)
                 {
-                    dStart = DateTime.Now.AddDays(-365);
+                    startDate = DateTime.Now.AddDays(-365);
                 }
-                if (dEnd == null)
+                if (endDate == null)
                 {
-                    dEnd = DateTime.Now;
+                    endDate = DateTime.Now;
                 }
                 //Data
-                appointments = meta.GetAppointments(clinicianCode, dStart, dEnd);
-                mdcs = meta.GetMDC(clinicianCode, dStart, dEnd);
+                appointments = _meta.GetAppointments(clinicianCode, startDate, endDate);
+                mdcs = _meta.GetMDC(clinicianCode, startDate, endDate);
                 totalappts = appointments.Concat(mdcs).OrderBy(a => a.BOOKED_DATE).ThenBy(a => a.BOOKED_TIME).ToList();
                 
                 
 
                 //Numbers
-                startDate = dStart.GetValueOrDefault();
-                endDate = dEnd.GetValueOrDefault();
-                iPatientsSeen = totalappts.Where(a => a.Attendance == "Attended" && a.SeenBy == a.STAFF_CODE_1).Count();
-                iPatientsSeenByAnother = totalappts.Where(a => a.Attendance == "Attended" && a.SeenBy != a.STAFF_CODE_1).Count();
-                iCancellations = totalappts.Where(a => a.Attendance.Contains("Canc")).Count();
-                iDNAs = totalappts.Where(a => a.Attendance == "Did not attend").Count();
-                iNotRecorded = totalappts.Where(a => a.Attendance == "NOT RECORDED").Count();
-                iTotalAppointments = totalappts.Count();
-                iClinicsHeld = totalappts.DistinctBy(a => a.BOOKED_DATE).Count();
+                this.startDate = startDate.GetValueOrDefault();
+                this.endDate = endDate.GetValueOrDefault();
+                patientsSeen = totalappts.Where(a => a.Attendance == "Attended" && a.SeenBy == a.STAFF_CODE_1).Count();
+                patientsSeenByAnother = totalappts.Where(a => a.Attendance == "Attended" && a.SeenBy != a.STAFF_CODE_1).Count();
+                cancellations = totalappts.Where(a => a.Attendance.Contains("Canc")).Count();
+                dnas = totalappts.Where(a => a.Attendance == "Did not attend").Count();
+                notRecorded = totalappts.Where(a => a.Attendance == "NOT RECORDED").Count();
+                totalAppointments = totalappts.Count();
+                clinicsHeld = totalappts.DistinctBy(a => a.BOOKED_DATE).Count();
                 
             }
             catch (Exception ex)
@@ -98,38 +98,38 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 Response.Redirect("Error?sError=" + ex.Message);
             }
         }
-        public void OnPost(string? clinicianCode, DateTime? dStart, DateTime? dEnd, bool? isPrintReq = false)
+        public void OnPost(string? clinicianCode, DateTime? startDate, DateTime? endDate, bool? isPrintReq = false)
         {
             try
             {
-                staffName = meta.GetStaffName(User.Identity.Name);
-                staffCode = meta.GetStaffCode(User.Identity.Name);                
-                isSupervisor = meta.GetIsConsSupervisor(staffCode);
-                staffMembers = meta.GetStaffMembers();
-                appointments = meta.GetAppointments(clinicianCode, dStart, dEnd);
-                mdcs = meta.GetMDC(clinicianCode, dStart, dEnd);
+                staffName = _meta.GetStaffName(User.Identity.Name);
+                staffCode = _meta.GetStaffCode(User.Identity.Name);                
+                isSupervisor = _meta.GetIsConsSupervisor(staffCode);
+                staffMembers = _meta.GetStaffMembers();
+                appointments = _meta.GetAppointments(clinicianCode, startDate, endDate);
+                mdcs = _meta.GetMDC(clinicianCode, startDate, endDate);
                 totalappts = appointments.Concat(mdcs).OrderBy(a => a.BOOKED_DATE).ThenBy(a => a.BOOKED_TIME).ToList();
 
-                sClinCode = clinicianCode;
-                string sClinName = meta.GetStaffNameFromStaffCode(sClinCode);                
+                clinCode = clinicianCode;
+                string clinName = _meta.GetStaffNameFromStaffCode(clinCode);                
                 
-                startDate = dStart.GetValueOrDefault();
-                endDate = dEnd.GetValueOrDefault();
-                iPatientsSeen = totalappts.Where(a => a.Attendance == "Attended" && a.SeenBy == a.STAFF_CODE_1).Count();
-                iPatientsSeenByAnother = totalappts.Where(a => a.Attendance == "Attended" && a.SeenBy != a.STAFF_CODE_1).Count();
-                iCancellations = totalappts.Where(a => a.Attendance.Contains("Canc")).Count();
-                iDNAs = totalappts.Where(a => a.Attendance == "Did not attend").Count();
-                iNotRecorded = totalappts.Where(a => a.Attendance == "NOT RECORDED").Count();
-                iTotalAppointments = totalappts.Count();
-                iClinicsHeld = totalappts.DistinctBy(a => a.BOOKED_DATE).Count();
+                startDate = startDate.GetValueOrDefault();
+                endDate = endDate.GetValueOrDefault();
+                patientsSeen = totalappts.Where(a => a.Attendance == "Attended" && a.SeenBy == a.STAFF_CODE_1).Count();
+                patientsSeenByAnother = totalappts.Where(a => a.Attendance == "Attended" && a.SeenBy != a.STAFF_CODE_1).Count();
+                cancellations = totalappts.Where(a => a.Attendance.Contains("Canc")).Count();
+                dnas = totalappts.Where(a => a.Attendance == "Did not attend").Count();
+                notRecorded = totalappts.Where(a => a.Attendance == "NOT RECORDED").Count();
+                totalAppointments = totalappts.Count();
+                clinicsHeld = totalappts.DistinctBy(a => a.BOOKED_DATE).Count();
 
                 if (isPrintReq.GetValueOrDefault())
                 {
-                    printer.PrintReport(totalappts, sClinName, dStart, dEnd);
+                    printer.PrintReport(totalappts, clinName, startDate, endDate);
                     //isSuccess = true;
-                    //sMessage = "The report has been saved to your C:\\CGU_DB folder.";
+                    //Message = "The report has been saved to your C:\\CGU_DB folder.";
                     
-                    Response.Redirect("Download?sClin=" + sClinName + "&dStart=" + dStart.Value.ToString("yyyy-MM-dd") + "&dEnd=" + dEnd.Value.ToString("yyyy-MM-dd"));
+                    Response.Redirect("Download?sClin=" + clinName + "&startDate=" + startDate.Value.ToString("yyyy-MM-dd") + "&endDate=" + endDate.Value.ToString("yyyy-MM-dd"));
                     
                 }
 
