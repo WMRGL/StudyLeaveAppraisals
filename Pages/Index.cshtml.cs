@@ -8,17 +8,19 @@ namespace StudyLeaveAppraisals.Pages
     public class IndexModel : PageModel
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _config;
         private readonly Metadata _meta;
 
-        public IndexModel(DataContext context)
+        public IndexModel(DataContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
             _meta = new Metadata(_context);
         }
 
         public string staffCode { get; set; }
         public string staffName { get; set; }
-        //public bool isSupervisor { get; set; }
+        public bool isLive { get; set; }
 
 
         [Authorize]
@@ -35,7 +37,7 @@ namespace StudyLeaveAppraisals.Pages
                 {
                     staffName = _meta.GetStaffName(User.Identity.Name);
                     staffCode = _meta.GetStaffCode(User.Identity.Name);                    
-                    //isSupervisor = _meta.GetIsSupervisor(staffCode);
+                    isLive = bool.Parse(_config.GetValue("IsLive", ""));
                 }
 
             }
