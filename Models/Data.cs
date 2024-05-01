@@ -38,6 +38,7 @@ namespace StudyLeaveAppraisals.Models
         public string? StaffCode { get; set; }
         public bool? Attended { get; set; }
         public string RequesterName { get; set; }
+        public DateTime DateRequested { get; set; }
     }
 
     [Table("StudyLeaveFunds", Schema = "dbo")]

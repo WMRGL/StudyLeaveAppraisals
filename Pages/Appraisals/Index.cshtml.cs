@@ -106,12 +106,18 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 staffCode = _meta.GetStaffCode(User.Identity.Name);                
                 isSupervisor = _meta.GetIsConsSupervisor(staffCode);
                 staffMembers = _meta.GetStaffMembers();
-                appointments = _meta.GetAppointments(clinicianCode, startDate, endDate);
-                mdcs = _meta.GetMDC(clinicianCode, startDate, endDate);
+                
+                if (clinicianCode != null)
+                {
+                    staffCode = clinicianCode;
+                }
+                
+                appointments = _meta.GetAppointments(staffCode, startDate, endDate);
+                mdcs = _meta.GetMDC(staffCode, startDate, endDate);
                 totalappts = appointments.Concat(mdcs).OrderBy(a => a.BOOKED_DATE).ThenBy(a => a.BOOKED_TIME).ToList();
 
-                clinCode = clinicianCode;
-                string clinName = _meta.GetStaffNameFromStaffCode(clinCode);                
+                
+                string clinName = _meta.GetStaffNameFromStaffCode(staffCode);                
                 
                 startDate = startDate.GetValueOrDefault();
                 endDate = endDate.GetValueOrDefault();

@@ -32,14 +32,14 @@ namespace StudyLeaveAppraisals.Meta
 
         public List<StudyLeaveRequests> GetMyRequests(string staffCode) 
         {
-            var req = _context.StudyLeaveRequests.Where(r => r.StaffCode == staffCode);
+            var req = _context.StudyLeaveRequests.Where(r => r.StaffCode == staffCode).OrderByDescending(r => r.DateRequested);
 
             return req.ToList();             
         }
 
         public List<StudyLeaveRequests> GetOtherRequests(string staffCode)
         {
-            var req = _context.StudyLeaveRequests.Where(r => r.StaffCode != staffCode & r.Granted == "Pending");
+            var req = _context.StudyLeaveRequests.Where(r => r.StaffCode != staffCode).OrderByDescending(r => r.DateRequested);
 
             return req.ToList();
         }

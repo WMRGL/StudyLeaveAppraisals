@@ -35,7 +35,14 @@
                             <td>@r.Event</td>
                             <td>@r.DateOfEvent.ToString("dd/MM/yyyy")</td>
                             <td>@r.Duration days</td>
-                            <td>@r.TotalRequested.Value.ToString("C")</td>
+                            @if (@r.TotalRequested.HasValue)
+                            {
+                                <td>@r.TotalRequested.Value.ToString("C")</td>
+                            }
+                            else
+                            {
+                                <td>£0</td>
+                            }
                             <td>@r.Granted</td>                    
                         </tr>
                     }
@@ -54,45 +61,101 @@
     @*@if (Model.AllRequests.Count() > 0 && Model.isSupervisor)*@
     @if (Model.isSupervisor)
     {
-        @if (Model.AllRequests.Count() > 0)
-        {
-            <div class="row mb-5 g-5">
-                <h2>Requests Awaiting Approval</h2>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Requested By</th>
-                            <th>Event</th>
-                            <th>Date</th>
-                            <th>Duration</th>
-                            <th>Total Requested</th>
-                            <th>Granted</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var r in Model.AllRequests)
-                        {
+        <form id="frmRequests" method="post">
+            @if (Model.AllRequests.Count() > 0)
+            {
+                <div class="row mb-5 g-5">
+                    <div class="col-md-7">
+                        <h2>Requests Awaiting Approval</h2>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="w-100">Show all requests:</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="checkbox" id="chkShowAll" onchange=SetShowAll() asp-for=@Model.isShowAllSelected />
+                        <input type="text" id="txtShowAll" name="isShowAll" hidden="true" />
+                        <select id="ddlStaffMembers" name="staffMember" asp-for=@Model.staffCodeSelected onchange=DoSubmit()>
+                            <option value="">Select...</option>
+                            @foreach(var s in Model.ListStaffMembers)
+                            {
+                                <option value=@s.STAFF_CODE>@s.NAME</option>
+                            }
+                        </select>
+                    </div>
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td><a type="button" class="btn btn-outline-primary" asp-page="/StudyLeave/Details" asp-route-ID=@r.ID>View</a></td>
-                                <td>@r.RequesterName</td>
-                                <td>@r.Event</td>
-                                <td>@r.DateOfEvent.ToString("dd/MM/yyyy")</td>
-                                <td>@r.Duration days</td>
-                                <td>@r.TotalRequested.Value.ToString("C")</td>
-                                <td>@r.Granted</td>
+                                <th></th>
+                                <th>Requested By</th>
+                                <th>Event</th>
+                                <th>Date</th>
+                                <th>Duration</th>
+                                <th>Total Requested</th>
+                                <th>Granted</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-        else
-        {
-            <div class="row mb-5 g-5">
-                <h2>There are no requests awaiting approval.</h2>
-            </div>
-        }
+                        </thead>
+                        <tbody>
+                            @foreach (var r in Model.AllRequests)
+                            {
+                                <tr>
+                                    <td><a type="button" class="btn btn-outline-primary" asp-page="/StudyLeave/Details" asp-route-ID=@r.ID>View</a></td>
+                                    <td>@r.RequesterName (@r.StaffCode)</td>
+                                    <td>@r.Event</td>
+                                    <td>@r.DateOfEvent.ToString("dd/MM/yyyy")</td>
+                                    <td>@r.Duration days</td>
+                                    @if (@r.TotalRequested.HasValue)
+                                    {
+                                        <td>@r.TotalRequested.Value.ToString("C")</td>
+                                    }
+                                    else
+                                    {
+                                        <td>£0</td>
+                                    }
+                                    <td>@r.Granted</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }       
+            else
+            {
+                <div class="row mb-5 g-5">
+                    <h2>There are no requests awaiting approval.</h2>
+                </div>
+            }
+        </form>
     }
     
 </div>
+
+<script>
+
+    window.addEventListener("load", SetIsShowAllChecked);
+
+    function SetShowAll()
+    {
+        SetIsShowAllChecked();
+        DoSubmit();
+    }
+
+    function SetIsShowAllChecked()
+    {
+        document.getElementById("txtShowAll").value = document.getElementById("chkShowAll").checked;
+        if (document.getElementById("chkShowAll").checked) 
+        { 
+            document.getElementById("ddlStaffMembers").hidden = false;
+        }
+        else
+        {
+            document.getElementById("ddlStaffMembers").value = "";
+            document.getElementById("ddlStaffMembers").hidden = true;
+        }
+    }
+
+    function DoSubmit()
+    {
+        document.getElementById("frmRequests").submit();
+    }
+
+</script>
