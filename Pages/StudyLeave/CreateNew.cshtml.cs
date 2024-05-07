@@ -9,13 +9,15 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        private readonly Metadata _meta;
+        private readonly AppointmentData _meta;
+        private readonly StaffData _staffData;
         private readonly DoSQL _sql;
         public CreateNewModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _meta = new Metadata(_context);
+            _meta = new AppointmentData(_context);
+            _staffData = new StaffData(_context);
             _sql = new DoSQL(_config);
             _config = config;
         }
@@ -29,7 +31,7 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
         {
             try
             {
-                staffName = _meta.GetStaffName(User.Identity.Name);
+                staffName = _staffData.GetStaffName(User.Identity.Name);
             }
             catch (Exception ex)
             {
@@ -41,11 +43,11 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
         {
             try
             {
-                staffName = _meta.GetStaffName(User.Identity.Name);
+                staffName = _staffData.GetStaffName(User.Identity.Name);
                 if (eventName != null & eventDate != DateTime.MinValue & travelCost != null & accomCost != null & eventCost != null & days != null &
                     totalReq != null & dateRequested != DateTime.MinValue)
                 {
-                    _sql.CreateNewStudyLeaveRequest(eventName, eventDate, travelCost, accomCost, eventCost, days, totalReq, dateRequested, _meta.GetStaffCode(User.Identity.Name), _meta.GetStaffName(User.Identity.Name));
+                    _sql.CreateNewStudyLeaveRequest(eventName, eventDate, travelCost, accomCost, eventCost, days, totalReq, dateRequested, _staffData.GetStaffCode(User.Identity.Name), _staffData.GetStaffName(User.Identity.Name));
                     isSuccess = true;
                     Message = "Saved!";
                 }

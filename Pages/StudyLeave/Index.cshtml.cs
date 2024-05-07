@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.SqlClient;
-using PdfSharpCore.Pdf.Filters;
 using StudyLeaveAppraisals.Data;
 using StudyLeaveAppraisals.Meta;
 using StudyLeaveAppraisals.Models;
@@ -11,12 +9,15 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
     public class IndexModel : PageModel
     {
         private readonly DataContext _context;
-        private readonly Metadata _meta;
-
+        private readonly AppointmentData _meta;
+        private readonly StaffData _staffData;
+        private readonly StudyLeaveRequestsData _studyLeaveRequestsData;
         public IndexModel(DataContext context)
         {
             _context = context;
-            _meta = new Metadata(_context);
+            _meta = new AppointmentData(_context);
+            _staffData = new StaffData(_context);
+            _studyLeaveRequestsData = new StudyLeaveRequestsData(_context);
         }
 
         public List<StudyLeaveRequests> MyRequests { get; set; }
@@ -40,15 +41,15 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
                 }
                 else
                 {
-                    staffName = _meta.GetStaffName(User.Identity.Name);
-                    staffCode = _meta.GetStaffCode(User.Identity.Name);                    
-                    isSupervisor = _meta.GetIsGCSupervisor(staffCode);
-                    ListFunds = _meta.GetFunds();
-                    ListStaffMembers = _meta.GetStaffMembers().Where(s => s.CLINIC_SCHEDULER_GROUPS == "GC").OrderBy(s => s.NAME).ToList();
-                    MyRequests = _meta.GetMyRequests(staffCode);
+                    staffName = _staffData.GetStaffName(User.Identity.Name);
+                    staffCode = _staffData.GetStaffCode(User.Identity.Name);                    
+                    isSupervisor = _staffData.GetIsGCSupervisor(staffCode);
+                    ListFunds = _studyLeaveRequestsData.GetFunds();
+                    ListStaffMembers = _staffData.GetStaffMembers().Where(s => s.CLINIC_SCHEDULER_GROUPS == "GC").OrderBy(s => s.NAME).ToList();
+                    MyRequests = _studyLeaveRequestsData.GetMyRequests(staffCode);
                     if (isSupervisor)
                     {
-                        AllRequests = _meta.GetOtherRequests(staffCode);
+                        AllRequests = _studyLeaveRequestsData.GetOtherRequests(staffCode);
                         if (!isShowAll.GetValueOrDefault())
                         {
                             AllRequests = AllRequests.Where(r => r.Granted == "Pending").ToList();
@@ -72,13 +73,13 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
 
         public void OnPost(bool? isShowAll = false, string? staffMember="")
         {
-            staffName = _meta.GetStaffName(User.Identity.Name);
-            staffCode = _meta.GetStaffCode(User.Identity.Name);
-            isSupervisor = _meta.GetIsGCSupervisor(staffCode);
-            ListFunds = _meta.GetFunds();
-            ListStaffMembers = _meta.GetStaffMembers();
-            MyRequests = _meta.GetMyRequests(staffCode);
-            AllRequests = _meta.GetOtherRequests(staffCode);            
+            staffName = _staffData.GetStaffName(User.Identity.Name);
+            staffCode = _staffData.GetStaffCode(User.Identity.Name);
+            isSupervisor = _staffData.GetIsGCSupervisor(staffCode);
+            ListFunds = _studyLeaveRequestsData.GetFunds();
+            ListStaffMembers = _staffData.GetStaffMembers();
+            MyRequests = _studyLeaveRequestsData.GetMyRequests(staffCode);
+            AllRequests = _studyLeaveRequestsData.GetOtherRequests(staffCode);            
 
             Response.Redirect($"StudyLeave?isShowAll={isShowAll}&staffMember={staffMember}");
         }

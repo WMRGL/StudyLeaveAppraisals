@@ -9,13 +9,15 @@ namespace StudyLeaveAppraisals.Pages
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        private readonly Metadata _meta;
+        private readonly AppointmentData _meta;
+        private readonly StaffData _staffData;
 
         public IndexModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _meta = new Metadata(_context);
+            _meta = new AppointmentData(_context);
+            _staffData = new StaffData(_context);
         }
 
         public string staffCode { get; set; }
@@ -35,8 +37,8 @@ namespace StudyLeaveAppraisals.Pages
                 }
                 else
                 {
-                    staffName = _meta.GetStaffName(User.Identity.Name);
-                    staffCode = _meta.GetStaffCode(User.Identity.Name);                    
+                    staffName = _staffData.GetStaffName(User.Identity.Name);
+                    staffCode = _staffData.GetStaffCode(User.Identity.Name);                    
                     isLive = bool.Parse(_config.GetValue("IsLive", ""));
                 }
 

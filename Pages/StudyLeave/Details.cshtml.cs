@@ -10,13 +10,17 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        private readonly Metadata _meta;
+        private readonly AppointmentData _meta;
+        private readonly StaffData _staffData;
+        private readonly StudyLeaveRequestsData _studyLeaveRequestsData;
         private readonly DoSQL _sql;
         public DetailsModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _meta = new Metadata(_context);
+            _meta = new AppointmentData(_context);
+            _staffData = new StaffData(_context);
+            _studyLeaveRequestsData = new StudyLeaveRequestsData(_context);
             _sql = new DoSQL(_config);
             _config = config;
         }
@@ -34,15 +38,11 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
         {
             try
             {
-                staffName = _meta.GetStaffName(User.Identity.Name);
-                staffCode = _meta.GetStaffCode(User.Identity.Name);
-                //if (_meta.supervisorStaffCodes.Contains(staffCode))
-                //{
-                //    isSupervisor = true;
-                //}
-                isSupervisor = _meta.GetIsGCSupervisor(staffCode);
-                Request = _meta.GetRequestDetails(ID);
-                Funds = _meta.GetFunds();
+                staffName = _staffData.GetStaffName(User.Identity.Name);
+                staffCode = _staffData.GetStaffCode(User.Identity.Name);             
+                isSupervisor = _staffData.GetIsGCSupervisor(staffCode);
+                Request = _studyLeaveRequestsData.GetRequestDetails(ID);
+                Funds = _studyLeaveRequestsData.GetFunds();
             }
             catch (Exception ex)
             {
@@ -54,15 +54,15 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
         {
             try
             {
-                staffName = _meta.GetStaffName(User.Identity.Name);
-                staffCode = _meta.GetStaffCode(User.Identity.Name);                
-                isSupervisor = _meta.GetIsGCSupervisor(staffCode);
-                Request = _meta.GetRequestDetails(id);
-                Funds = _meta.GetFunds();
+                staffName = _staffData.GetStaffName(User.Identity.Name);
+                staffCode = _staffData.GetStaffCode(User.Identity.Name);                
+                isSupervisor = _staffData.GetIsGCSupervisor(staffCode);
+                Request = _studyLeaveRequestsData.GetRequestDetails(id);
+                Funds = _studyLeaveRequestsData.GetFunds();
 
                 if (granted != null & totalGranted != null & fund != null & fundYear != null)
                 {
-                    _sql.ApproveStudyLeaveRequest(id, granted, totalGranted, fund, fundYear, _meta.GetStaffName(User.Identity.Name));
+                    _sql.ApproveStudyLeaveRequest(id, granted, totalGranted, fund, fundYear, _staffData.GetStaffName(User.Identity.Name));
                     isSuccess = true;
                     Message = "Saved!";
                 }

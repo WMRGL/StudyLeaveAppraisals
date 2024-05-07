@@ -3,19 +3,20 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using StudyLeaveAppraisals.Data;
 using StudyLeaveAppraisals.Meta;
 using StudyLeaveAppraisals.Models;
-using System.Globalization;
 
 namespace StudyLeaveAppraisals.Pages.Appraisals
 {
     public class IndexModel : PageModel
     {
         private readonly DataContext _context;
-        private readonly Metadata _meta;
+        private readonly AppointmentData _appointmentData;
+        private readonly StaffData _staffData;
         private readonly PrintServices printer;
         public IndexModel(DataContext context)
         {
             _context = context;
-            _meta = new Metadata(_context);
+            _appointmentData = new AppointmentData(_context);
+            _staffData = new StaffData(_context);
             printer = new PrintServices();
         }
 
@@ -53,9 +54,9 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 }
                 else
                 {
-                    staffName = _meta.GetStaffName(User.Identity.Name);
-                    staffCode = _meta.GetStaffCode(User.Identity.Name);                    
-                    isSupervisor = _meta.GetIsConsSupervisor(staffCode);
+                    staffName = _staffData.GetStaffName(User.Identity.Name);
+                    staffCode = _staffData.GetStaffCode(User.Identity.Name);                    
+                    isSupervisor = _staffData.GetIsConsSupervisor(staffCode);
                 }
 
                 if(clinicianCode == null)
@@ -63,7 +64,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                     clinicianCode = staffCode;
                 }
 
-                staffMembers = _meta.GetStaffMembers();
+                staffMembers = _staffData.GetStaffMembers();
                 
                 clinCode = clinicianCode;
                 if (startDate == null)
@@ -75,8 +76,8 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                     endDate = DateTime.Now;
                 }
                 //Data
-                appointments = _meta.GetAppointments(clinicianCode, startDate, endDate);
-                mdcs = _meta.GetMDC(clinicianCode, startDate, endDate);
+                appointments = _appointmentData.GetAppointments(clinicianCode, startDate, endDate);
+                mdcs = _appointmentData.GetMDC(clinicianCode, startDate, endDate);
                 totalappts = appointments.Concat(mdcs).OrderBy(a => a.BOOKED_DATE).ThenBy(a => a.BOOKED_TIME).ToList();
                 
                 
@@ -102,22 +103,22 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
         {
             try
             {
-                staffName = _meta.GetStaffName(User.Identity.Name);
-                staffCode = _meta.GetStaffCode(User.Identity.Name);                
-                isSupervisor = _meta.GetIsConsSupervisor(staffCode);
-                staffMembers = _meta.GetStaffMembers();
+                staffName = _staffData.GetStaffName(User.Identity.Name);
+                staffCode = _staffData.GetStaffCode(User.Identity.Name);                
+                isSupervisor = _staffData.GetIsConsSupervisor(staffCode);
+                staffMembers = _staffData.GetStaffMembers();
                 
                 if (clinicianCode != null)
                 {
                     staffCode = clinicianCode;
                 }
                 
-                appointments = _meta.GetAppointments(staffCode, startDate, endDate);
-                mdcs = _meta.GetMDC(staffCode, startDate, endDate);
+                appointments = _appointmentData.GetAppointments(staffCode, startDate, endDate);
+                mdcs = _appointmentData.GetMDC(staffCode, startDate, endDate);
                 totalappts = appointments.Concat(mdcs).OrderBy(a => a.BOOKED_DATE).ThenBy(a => a.BOOKED_TIME).ToList();
 
                 
-                string clinName = _meta.GetStaffNameFromStaffCode(staffCode);                
+                string clinName = _staffData.GetStaffNameFromStaffCode(staffCode);                
                 
                 startDate = startDate.GetValueOrDefault();
                 endDate = endDate.GetValueOrDefault();
@@ -132,9 +133,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 if (isPrintReq.GetValueOrDefault())
                 {
                     printer.PrintReport(totalappts, clinName, startDate, endDate);
-                    //isSuccess = true;
-                    //Message = "The report has been saved to your C:\\CGU_DB folder.";
-                    
+                                       
                     Response.Redirect("Download?sClin=" + clinName + "&startDate=" + startDate.Value.ToString("yyyy-MM-dd") + "&endDate=" + endDate.Value.ToString("yyyy-MM-dd"));
                     
                 }
