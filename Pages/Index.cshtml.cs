@@ -9,19 +9,20 @@ namespace StudyLeaveAppraisals.Pages
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        private readonly AppointmentData _meta;
         private readonly StaffData _staffData;
+        private readonly NotificationData _notificationData;
 
         public IndexModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _meta = new AppointmentData(_context);
             _staffData = new StaffData(_context);
+            _notificationData = new NotificationData(_context);
         }
 
         public string staffCode { get; set; }
         public string staffName { get; set; }
+        public string notificationMessage { get; set; }
         public bool isLive { get; set; }
 
 
@@ -37,6 +38,7 @@ namespace StudyLeaveAppraisals.Pages
                 }
                 else
                 {
+                    notificationMessage = _notificationData.GetMessage();
                     staffName = _staffData.GetStaffName(User.Identity.Name);
                     staffCode = _staffData.GetStaffCode(User.Identity.Name);                    
                     isLive = bool.Parse(_config.GetValue("IsLive", ""));

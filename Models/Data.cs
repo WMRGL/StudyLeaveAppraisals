@@ -70,10 +70,22 @@ namespace StudyLeaveAppraisals.Models
         public string? Clinician { get; set; }
         public string? Clinician2 { get; set; }
         public string? Clinician3 { get; set; }
-        public string? SeenByClinician { get; set; }
+        public string? SeenByClinician { get; set; }        
     }
 
-    [Table("ClinicSlotsAll", Schema ="dbo")]
+    [Table("ViewPatientReferralDetails", Schema = "dbo")]
+    public class Referrals
+    {
+        [Key]
+        public int RefID { get; set; }
+        public DateTime RefDate { get; set; }
+        public string RefType { get; set; }
+        public string? RefClass { get; set; }
+        public string? PATIENT_TYPE_CODE { get; set; }
+        public string? GC_CODE {  get; set; }
+    }
+
+        [Table("ClinicSlotsAll", Schema ="dbo")]
     public class Slots
     {
         [Key]
@@ -93,5 +105,15 @@ namespace StudyLeaveAppraisals.Models
         public string StaffCode { get; set; }        
         public bool isGCSupervisor { get; set; }
         public bool isConsSupervisor { get; set; }
+    }
+
+    [Table("Notifications", Schema = "dbo")]
+    public class Notifications
+    {
+        [Key]
+        public int ID { get; set; }
+        public string MessageCode { get; set; }
+        public string Message { get; set; }
+        public bool IsActive { get; set; }
     }
 }

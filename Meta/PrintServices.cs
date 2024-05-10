@@ -1,25 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using PdfSharpCore.Pdf;
+﻿using PdfSharpCore.Pdf;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Drawing.Layout;
 using StudyLeaveAppraisals.Data;
 using StudyLeaveAppraisals.Models;
 using System.Globalization;
-using System.Net.Http;
-using Azure;
-using Microsoft.AspNetCore.Mvc;
-using System.IO;
-using Microsoft.AspNetCore.Hosting.Server;
 using System.Net;
+using Microsoft.AspNetCore.Routing;
 
 namespace StudyLeaveAppraisals.Meta
 {
     public class PrintServices
     {
-        private readonly DataContext _context;
-
+ 
         public PrintServices() {}
-        public void PrintReport(List<Appointments> totalAppts, string? clinicianName, DateTime? startDate, DateTime? endDate)
+        public void PrintReport(List<Appointments> totalAppts, List<Referrals> referrals, string? clinicianName, DateTime? startDate, DateTime? endDate)
         {            
             PdfDocument document = new PdfDocument();
             document.Info.Title = "My PDF";
@@ -157,14 +151,55 @@ namespace StudyLeaveAppraisals.Meta
             tot = totalAppts.Where(a => a.SeenByClinician == clinicianName || a.SeenByClinician == null).Count();
             tf.DrawString(tot.ToString(), font, XBrushes.Black, new XRect(570, para, 20, 20));
 
-            string fileName = "wwwroot\\" + clinicianName.Replace(" ", "_") + "_" + startDate.Value.ToString("yyyy-MM-dd") + "_" + endDate.Value.ToString("yyyy-MM-dd") + ".pdf";
+            //referrals
+            int incompleteRefs = referrals.Where(r => r.RefType == "Incomplete Referral").Count();
+            int newRefs = referrals.Where(r => r.RefType == "New Referral").Count();
+            int reRefs = referrals.Where(r => r.RefType == "Re-Referral").Count();
+            int secondaryRefs = referrals.Where(r => r.RefType == "Secondary referral").Count();
+            int tempReg = referrals.Where(r => r.RefType == "Temp_RegOnly").Count();
+            int notEntered = referrals.Where(r => r.RefClass == null).Count();
+            int routine = referrals.Where(r => r.RefClass == "Routine").Count();
+            int fastTrack = referrals.Where(r => r.RefClass == "Fast-track").Count();
+            int urgent = referrals.Where(r => r.RefClass == "Urgent").Count();
+
+            para = para + 60;
+            tf.DrawString("Referrals by Type", fontBold, XBrushes.Black, new XRect(20, para, page.Width, 200));
+            tf.DrawString("Referrals by Class", fontBold, XBrushes.Black, new XRect(300, para, page.Width, 200));
+
+            para = para + 20;
+            tf.DrawString("Incomplete:", font, XBrushes.Black, new XRect(20, para, 400, 20));
+            tf.DrawString(incompleteRefs.ToString(), font, XBrushes.Black, new XRect(150, para, 400, 20));
+            tf.DrawString("Not Entered:", font, XBrushes.Black, new XRect(300, para, 400, 20));
+            tf.DrawString(notEntered.ToString(), font, XBrushes.Black, new XRect(450, para, 400, 20));
+            para = para + 15;
+            tf.DrawString("New Referrals:", font, XBrushes.Black, new XRect(20, para, 400, 20));
+            tf.DrawString(newRefs.ToString(), font, XBrushes.Black, new XRect(150, para, 400, 20));
+            tf.DrawString("Routine:", font, XBrushes.Black, new XRect(300, para, 400, 20));
+            tf.DrawString(routine.ToString(), font, XBrushes.Black, new XRect(450, para, 400, 20));
+            para = para + 15;
+            tf.DrawString("Re-referrals:", font, XBrushes.Black, new XRect(20, para, 400, 20));
+            tf.DrawString(reRefs.ToString(), font, XBrushes.Black, new XRect(150, para, 400, 20));
+            tf.DrawString("Fast-Track:", font, XBrushes.Black, new XRect(300, para, 400, 20));
+            tf.DrawString(fastTrack.ToString(), font, XBrushes.Black, new XRect(450, para, 400, 20));
+            para = para + 15;
+            tf.DrawString("Secondary:", font, XBrushes.Black, new XRect(20, para, 400, 20));
+            tf.DrawString(secondaryRefs.ToString(), font, XBrushes.Black, new XRect(150, para, 400, 20));
+            tf.DrawString("Urgent:", font, XBrushes.Black, new XRect(300, para, 400, 20));
+            tf.DrawString(urgent.ToString(), font, XBrushes.Black, new XRect(450, para, 400, 20));
+            para = para + 15;
+            tf.DrawString("Register Only:", font, XBrushes.Black, new XRect(20, para, 400, 20));
+            tf.DrawString(tempReg.ToString(), font, XBrushes.Black, new XRect(150, para, 400, 20));
+            
+
+
+            string fileName = "wwwroot\\" + clinicianName.Replace(" ", "_") + ".pdf";
             string fileNameLocal = @"C:\CGU_DB\" + clinicianName + " " + startDate.Value.ToString("yyyy-MM-dd") + " to " + endDate.Value.ToString("yyyy-MM-dd") + ".pdf";
             document.Save(fileName);
             
             
             //var uri = new System.Uri(new Uri("file://"), fileName);
             //var converted = uri.AbsoluteUri;
-
+            //downloading doesn't work here, the following is not used
             using (var client = new WebClient())
             {
                 //using (var s = client.GetStreamAsync(converted))

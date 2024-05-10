@@ -10,12 +10,14 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
     {
         private readonly DataContext _context;
         private readonly AppointmentData _appointmentData;
+        private readonly ReferralData _referralData;
         private readonly StaffData _staffData;
         private readonly PrintServices printer;
         public IndexModel(DataContext context)
         {
             _context = context;
             _appointmentData = new AppointmentData(_context);
+            _referralData = new ReferralData(_context);
             _staffData = new StaffData(_context);
             printer = new PrintServices();
         }
@@ -24,7 +26,8 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
         public List<Appointments> appointments { get; set; }
         public List<Appointments> mdcs { get; set; }
         public List<Appointments> totalappts { get; set; }
-        public List<Appointments> apptsPerClinic { get; set; }        
+        public List<Appointments> apptsPerClinic { get; set; }
+        public List<Referrals> referrals { get; set; }
         public string staffCode { get; set; }
         public string staffName { get; set; }
         public bool isSupervisor { get; set; }
@@ -38,6 +41,15 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
         public int notRecorded;
         public int clinicsHeld;
         public int totalAppointments;
+        public int incompleteRefs;
+        public int newRefs;
+        public int reRefs;
+        public int secondaryRefs;
+        public int tempReg;
+        public int notEntered;
+        public int routine;
+        public int fastTrack;
+        public int urgent;
 
         public bool isSuccess;
         public string Message;
@@ -80,7 +92,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 mdcs = _appointmentData.GetMDC(clinicianCode, startDate, endDate);
                 totalappts = appointments.Concat(mdcs).OrderBy(a => a.BOOKED_DATE).ThenBy(a => a.BOOKED_TIME).ToList();
                 
-                
+
 
                 //Numbers
                 this.startDate = startDate.GetValueOrDefault();
@@ -130,9 +142,14 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 totalAppointments = totalappts.Count();
                 clinicsHeld = totalappts.DistinctBy(a => a.BOOKED_DATE).Count();
 
+                //referral data
+                referrals = _referralData.GetReferrals(clinicianCode, startDate, endDate);
+                
+
+
                 if (isPrintReq.GetValueOrDefault())
                 {
-                    printer.PrintReport(totalappts, clinName, startDate, endDate);
+                    printer.PrintReport(totalappts, referrals, clinName, startDate, endDate);
                                        
                     Response.Redirect("Download?sClin=" + clinName + "&startDate=" + startDate.Value.ToString("yyyy-MM-dd") + "&endDate=" + endDate.Value.ToString("yyyy-MM-dd"));
                     
