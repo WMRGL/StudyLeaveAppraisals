@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using System;
 
 namespace StudyLeaveAppraisals.Meta
 {
@@ -40,6 +41,13 @@ namespace StudyLeaveAppraisals.Meta
                 "', GrantedDate='" + DateTime.Now.ToString("yyyy-MM-dd") + "', TotalGranted=" + totalGranted + 
                 ", Fund='" + fund + "', FundYear=" + fundYear + " where ID = " + id;
             
+            DoSQLCommand(sql);
+        }
+
+        public void CancelStudyLeaveRequest(int id)
+        {
+            sql = "update StudyLeaveRequests set logicaldelete = 1 where ID = " + id;
+
             DoSQLCommand(sql);
         }
     }

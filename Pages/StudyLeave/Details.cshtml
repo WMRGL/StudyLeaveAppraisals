@@ -21,6 +21,13 @@
         }
     }
 
+    @if(Model.Request.LogicalDelete)
+    {
+        <div class="alert alert-danger" style="text-align:center">
+            This request has been cancelled.
+        </div>
+    }
+
     <div class="row mb-5">
         <div class="col-md-4">
             <a type="button" class="btn btn-outline-primary" asp-page="/StudyLeave/Index">Back to Index</a>
@@ -62,6 +69,7 @@
             Total Requested: @Model.Request.TotalRequested.Value.ToString("C")
         </dd>
     </div>
+
     @if (Model.Request.Granted == "Yes")
     {
         <div class="row mb-5 g-5">
@@ -85,8 +93,27 @@
                 @Model.Request.GrantedDate.Value.ToString("dd/MM/yyyy")
             </dd>        
         </div>
+
+
     }
-    @if(Model.isSupervisor && Model.Request.StaffCode != Model.staffCode)
+    else
+    {
+        @if (Model.Request.StaffCode == Model.staffCode && !Model.Request.LogicalDelete)
+        {
+            <form id="frmCancelRequest" method="post">
+                <div class="row">
+                    <div class="col-md-2" style="text-align:right">
+                        <button type="button" class="btn btn-outline-danger" onclick="CancelRequest()">Cancel request</button>
+                    </div>
+                    <div class="col-md-10">
+                        <input type="text" id="txtIsCancel" name="isCancel" hidden="true" />
+                    </div>
+                </div>
+            </form>
+        }
+    }
+
+    @if(Model.isSupervisor && Model.Request.StaffCode != Model.staffCode && !Model.Request.LogicalDelete)
     {
         <div class="row">
             <dt class="col-md-2">
@@ -102,6 +129,7 @@
 
         <br />
         <form method="post">
+            
             <div class="row">
                 <div class="col-md-2" style="text-align:right">
                     <label>Grant request:</label>
@@ -162,6 +190,12 @@
     function SetDefaultAmount()
     {
         document.getElementById("iTotal").value = @Model.Request.TotalRequested.Value;
+    }
+
+    function CancelRequest() 
+    { 
+        document.getElementById("txtIsCancel").value = "true";
+        document.getElementById("frmCancelRequest").submit();        
     }
 
 </script>

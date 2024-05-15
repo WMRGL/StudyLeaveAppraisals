@@ -50,7 +50,7 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
             }
         }
 
-        public void OnPost(int id, string granted, int totalGranted, string fund, int fundYear)
+        public void OnPost(int id, string granted, int totalGranted, string fund, int fundYear, bool isCancel)
         {
             try
             {
@@ -60,16 +60,25 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
                 Request = _studyLeaveRequestsData.GetRequestDetails(id);
                 Funds = _studyLeaveRequestsData.GetFunds();
 
-                if (granted != null & totalGranted != null & fund != null & fundYear != null)
+                if (isCancel)
                 {
-                    _sql.ApproveStudyLeaveRequest(id, granted, totalGranted, fund, fundYear, _staffData.GetStaffName(User.Identity.Name));
+                    _sql.CancelStudyLeaveRequest(id);
                     isSuccess = true;
-                    Message = "Saved!";
+                    Message = "Request cancelled.";
                 }
                 else
                 {
-                    isSuccess = false;
-                    Message = "Missing data, please correct.";
+                    if (granted != null & totalGranted != null & fund != null & fundYear != null)
+                    {
+                        _sql.ApproveStudyLeaveRequest(id, granted, totalGranted, fund, fundYear, _staffData.GetStaffName(User.Identity.Name));
+                        isSuccess = true;
+                        Message = "Saved!";
+                    }
+                    else
+                    {
+                        isSuccess = false;
+                        Message = "Missing data, please correct.";
+                    }
                 }
             }
             catch (Exception ex)
