@@ -9,7 +9,8 @@ namespace StudyLeaveAppraisals.Pages
      
         public void OnGet(string sClin, DateTime startDate, DateTime endDate)
         {
-            dlFileName = sClin.Replace(" ", "_") + "_" + startDate.ToString("yyyy-MM-dd") + "_" + endDate.ToString("yyyy-MM-dd");
+            //dlFileName = sClin.Replace(" ", "_") + "_" + startDate.ToString("yyyy-MM-dd") + "_" + endDate.ToString("yyyy-MM-dd");
+            dlFileName = sClin.Replace(" ", "_");
             //it just pure and simple straight up flat-out REFUSES to download it to the client!!!!
             //Response.WriteAsync("C:\\CGU_DB\\" + dlFileName).Wait();
         }

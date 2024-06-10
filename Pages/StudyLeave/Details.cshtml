@@ -9,13 +9,13 @@
     {
         @if (!Model.isSuccess)
         {
-            <div class="alert alert-danger" style="text-align:center">
+            <div class="alert alert-danger text-center">
                 @Model.Message
             </div>
         }
         else
         {
-            <div class="alert alert-success" style="text-align:center">
+            <div class="alert alert-success text-center">
                 @Model.Message
             </div>
         }
@@ -23,7 +23,7 @@
 
     @if(Model.Request.LogicalDelete)
     {
-        <div class="alert alert-danger" style="text-align:center">
+        <div class="alert alert-danger text-center">
             This request has been cancelled.
         </div>
     }
@@ -102,7 +102,7 @@
         {
             <form id="frmCancelRequest" method="post">
                 <div class="row">
-                    <div class="col-md-2" style="text-align:right">
+                    <div class="col-md-2">
                         <button type="button" class="btn btn-outline-danger" onclick="CancelRequest()">Cancel request</button>
                     </div>
                     <div class="col-md-10">
@@ -131,7 +131,7 @@
         <form method="post">
             
             <div class="row">
-                <div class="col-md-2" style="text-align:right">
+                <div class="col-md-2 text-end">
                     <label>Grant request:</label>
                 </div>
                 <div class="col-md-10">
@@ -147,16 +147,16 @@
             <br />
             
             <div class="row">
-                <div class="col-md-2" style="text-align:right">
+                <div class="col-md-2 text-end">
                     <label>Total Granted (£):</label>
                 </div>
                 <div class="col-md-2">
                     <input class="w-75" name="totalGranted" id="iTotal" asp-for=@Model.Request.TotalGranted />                     
                 </div>
                 <div class="col-md-1">
-                    <button type="button" class="btn btn-outline-primary" style="font-size:small" onclick="SetDefaultAmount()">Set To Requested Amount</button>
+                    <button type="button" class="btn btn-outline-primary smallfont" onclick="SetDefaultAmount()">Set To Requested Amount</button>
                 </div>                
-                <div class="col-md-2" style="text-align:right">
+                <div class="col-md-2 text-end">
                     <label>Fund:</label>
                 </div>
                 <div class="col-md-3">

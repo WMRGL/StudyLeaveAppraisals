@@ -149,10 +149,13 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
 
                 if (isPrintReq.GetValueOrDefault())
                 {
-                    printer.PrintReport(totalappts, referrals, clinName, startDate, endDate);
-                                       
-                    Response.Redirect("Download?sClin=" + clinName + "&startDate=" + startDate.Value.ToString("yyyy-MM-dd") + "&endDate=" + endDate.Value.ToString("yyyy-MM-dd"));
-                    
+                    string clinNameFixed = clinName.Replace("'", "");
+
+                    printer.PrintReport(totalappts, referrals, clinNameFixed, startDate, endDate);
+
+                    //Response.Redirect("Download?sClin=" + clinNameFixed + "&startDate=" + startDate.Value.ToString("yyyy-MM-dd") + "&endDate=" + endDate.Value.ToString("yyyy-MM-dd"));
+                    Response.Redirect("Download?sClin=" + clinNameFixed);
+
                 }
 
             }
