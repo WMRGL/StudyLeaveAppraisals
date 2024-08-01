@@ -8,16 +8,20 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
 {
     public class IndexModel : PageModel
     {
+        private readonly IConfiguration _config;
         private readonly DataContext _context;
         private readonly AppointmentData _meta;
         private readonly StaffData _staffData;
         private readonly StudyLeaveRequestsData _studyLeaveRequestsData;
-        public IndexModel(DataContext context)
+        private readonly DoSQL _sql;
+        public IndexModel(DataContext context, IConfiguration config)
         {
+            _config = config;
             _context = context;
             _meta = new AppointmentData(_context);
             _staffData = new StaffData(_context);
             _studyLeaveRequestsData = new StudyLeaveRequestsData(_context);
+            _sql = new DoSQL(_config);
         }
 
         public List<StudyLeaveRequests> MyRequests { get; set; }
@@ -42,7 +46,8 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
                 else
                 {
                     staffName = _staffData.GetStaffName(User.Identity.Name);
-                    staffCode = _staffData.GetStaffCode(User.Identity.Name);                    
+                    staffCode = _staffData.GetStaffCode(User.Identity.Name);
+                    _sql.SqlWriteUsageAudit(staffCode, "", "Study Leave Index");
                     isSupervisor = _staffData.GetIsGCSupervisor(staffCode);
                     ListFunds = _studyLeaveRequestsData.GetFunds();
                     ListStaffMembers = _staffData.GetStaffMembers().Where(s => s.CLINIC_SCHEDULER_GROUPS == "GC").OrderBy(s => s.NAME).ToList();
@@ -75,6 +80,7 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
         {
             staffName = _staffData.GetStaffName(User.Identity.Name);
             staffCode = _staffData.GetStaffCode(User.Identity.Name);
+            _sql.SqlWriteUsageAudit(staffCode, $"Staffmember={staffMember}", "Study Leave Index");
             isSupervisor = _staffData.GetIsGCSupervisor(staffCode);
             ListFunds = _studyLeaveRequestsData.GetFunds();
             ListStaffMembers = _staffData.GetStaffMembers();

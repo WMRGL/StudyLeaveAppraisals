@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System;
+using System.Data;
 
 namespace StudyLeaveAppraisals.Meta
 {
@@ -49,6 +50,22 @@ namespace StudyLeaveAppraisals.Meta
             sql = "update StudyLeaveRequests set logicaldelete = 1 where ID = " + id;
 
             DoSQLCommand(sql);
+        }
+
+        public void SqlWriteUsageAudit(string username, string searchTerm, string formName)
+        {
+            SqlConnection _con = new SqlConnection(_config.GetConnectionString("ConString"));
+            SqlCommand cmd = new SqlCommand("[sp_CreateAudit]", _con);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.Parameters.Add("@staffCode", SqlDbType.VarChar).Value = username;
+            cmd.Parameters.Add("@form", SqlDbType.VarChar).Value = formName;
+            cmd.Parameters.Add("@database", SqlDbType.VarChar).Value = "SLA";
+            cmd.Parameters.Add("@searchTerm", SqlDbType.VarChar).Value = searchTerm;
+            cmd.Parameters.Add("@machine", SqlDbType.VarChar).Value = System.Environment.MachineName;
+
+            _con.Open();
+            cmd.ExecuteNonQuery();
+            _con.Close();
         }
     }
 }

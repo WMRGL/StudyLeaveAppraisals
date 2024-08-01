@@ -8,18 +8,22 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
 {
     public class IndexModel : PageModel
     {
+        private readonly IConfiguration _config;
         private readonly DataContext _context;
         private readonly AppointmentData _appointmentData;
         private readonly ReferralData _referralData;
         private readonly StaffData _staffData;
         private readonly PrintServices printer;
-        public IndexModel(DataContext context)
+        private readonly DoSQL _sql;
+        public IndexModel(DataContext context, IConfiguration config)
         {
+            _config = config;
             _context = context;
             _appointmentData = new AppointmentData(_context);
             _referralData = new ReferralData(_context);
             _staffData = new StaffData(_context);
             printer = new PrintServices();
+            _sql = new DoSQL(_config);
         }
 
         public List<StaffMembers> staffMembers { get; set; }
@@ -65,10 +69,11 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                     Response.Redirect("Login");
                 }
                 else
-                {
+                {                    
                     staffName = _staffData.GetStaffName(User.Identity.Name);
                     staffCode = _staffData.GetStaffCode(User.Identity.Name);                    
                     isSupervisor = _staffData.GetIsConsSupervisor(staffCode);
+                    _sql.SqlWriteUsageAudit(staffCode, "", "Appraisals index");
                 }
 
                 if(clinicianCode == null)
@@ -114,10 +119,11 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
         public void OnPost(string? clinicianCode, DateTime? startDate, DateTime? endDate, bool? isPrintReq = false)
         {
             try
-            {
+            {                
                 staffName = _staffData.GetStaffName(User.Identity.Name);
                 staffCode = _staffData.GetStaffCode(User.Identity.Name);                
                 isSupervisor = _staffData.GetIsConsSupervisor(staffCode);
+                _sql.SqlWriteUsageAudit(staffCode, $"Clinician={clinicianCode}", "Appraisals index");
                 staffMembers = _staffData.GetStaffMembers();
                 
                 if (clinicianCode != null)
