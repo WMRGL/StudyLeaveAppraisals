@@ -37,7 +37,7 @@ namespace StudyLeaveAppraisals.Meta
 
         public void ApproveStudyLeaveRequest(int id, string granted, int totalGranted, string fund, int fundYear, string grantedBy) 
         {
-            sql = "update StudyLeaveRequests set Granted='" + granted + "', GrantedBy='" + grantedBy + 
+            sql = "update StudyLeaveRequests set Granted='" + granted + "', GrantedBy='" + grantedBy.Replace("'", "''") + 
                 "', GrantedDate='" + DateTime.Now.ToString("yyyy-MM-dd") + "', TotalGranted=" + totalGranted + 
                 ", Fund='" + fund + "', FundYear=" + fundYear + " where ID = " + id;
             

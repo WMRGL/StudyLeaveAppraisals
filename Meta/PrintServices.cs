@@ -26,7 +26,7 @@ namespace StudyLeaveAppraisals.Meta
             XFont fontBold = new XFont("Arial", 12, XFontStyle.Bold);
             XFont fontBoldSmall = new XFont("Arial", 10, XFontStyle.Bold);
             XFont fontItalic = new XFont("Arial", 12, XFontStyle.Bold);
-            //Load the image for the letter head
+            //Load the image for the letter head            
             XImage image = XImage.FromFile(@"wwwroot\Letterhead.jpg");
             gfx.DrawImage(image, 350, 20, image.PixelWidth / 2, image.PixelHeight / 2);
             //tf.Alignment = XParagraphAlignment.Right;
