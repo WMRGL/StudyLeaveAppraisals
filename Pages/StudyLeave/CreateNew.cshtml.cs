@@ -47,7 +47,7 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
                 if (eventName != null & eventDate != DateTime.MinValue & travelCost != null & accomCost != null & eventCost != null & days != null &
                     totalReq != null & dateRequested != DateTime.MinValue)
                 {
-                    _sql.CreateNewStudyLeaveRequest(eventName, eventDate, travelCost, accomCost, eventCost, days, totalReq, dateRequested, _staffData.GetStaffCode(User.Identity.Name), _staffData.GetStaffName(User.Identity.Name));
+                    _sql.CreateNewStudyLeaveRequest(eventName.Replace("'", "''"), eventDate, travelCost, accomCost, eventCost, days, totalReq, dateRequested, _staffData.GetStaffCode(User.Identity.Name), _staffData.GetStaffName(User.Identity.Name));
                     isSuccess = true;
                     Message = "Saved!";
                 }
