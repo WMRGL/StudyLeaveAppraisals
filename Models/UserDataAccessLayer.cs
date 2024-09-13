@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Configuration;
 
 namespace StudyLeaveAppraisals.Models
 {
@@ -28,7 +26,7 @@ namespace StudyLeaveAppraisals.Models
         {
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("sp_CXValidateUserLogin", con);
+                SqlCommand cmd = new SqlCommand("sp_ValidateUserLogin", con);
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@LoginID", user.EMPLOYEE_NUMBER);
                 cmd.Parameters.AddWithValue("@LoginPassword", user.PASSWORD);
