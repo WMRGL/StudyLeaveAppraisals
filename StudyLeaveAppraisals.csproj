@@ -17,9 +17,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
     <PackageReference Include="PdfSharpCore" Version="1.3.63" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ClinicalXPDataConnections">
+      <HintPath>..\..\..\Websites\Libraries\ClinicalXPDataConnections.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

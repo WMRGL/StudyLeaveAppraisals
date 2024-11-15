@@ -2,36 +2,42 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using StudyLeaveAppraisals.Data;
 using StudyLeaveAppraisals.Meta;
-using StudyLeaveAppraisals.Models;
+using ClinicalXPDataConnections.Meta;
+using ClinicalXPDataConnections.Models;
+using ClinicalXPDataConnections.Data;
 
 namespace StudyLeaveAppraisals.Pages.Appraisals
 {
     public class IndexModel : PageModel
     {
         private readonly IConfiguration _config;
-        private readonly DataContext _context;
-        private readonly AppointmentData _appointmentData;
+        private readonly ClinicalContext _context;
+        private readonly SLAContext _slaContext;
+        private readonly IAppointmentData _appointmentData;
         private readonly ReferralData _referralData;
-        private readonly StaffData _staffData;
+        private readonly IStaffUserData _staffData;
+        private readonly ISupervisorData _supervisorData;
         private readonly PrintServices printer;
         private readonly DoSQL _sql;
-        public IndexModel(DataContext context, IConfiguration config)
+        public IndexModel(ClinicalContext context, SLAContext slaContext, IConfiguration config)
         {
             _config = config;
+            _slaContext = slaContext;
             _context = context;
             _appointmentData = new AppointmentData(_context);
             _referralData = new ReferralData(_context);
-            _staffData = new StaffData(_context);
+            _staffData = new StaffUserData(_context);
+            _supervisorData = new SupervisorData(_slaContext);
             printer = new PrintServices();
             _sql = new DoSQL(_config);
         }
 
-        public List<StaffMembers> staffMembers { get; set; }
-        public List<Appointments> appointments { get; set; }
-        public List<Appointments> mdcs { get; set; }
-        public List<Appointments> totalappts { get; set; }
-        public List<Appointments> apptsPerClinic { get; set; }
-        public List<Referrals> referrals { get; set; }
+        public List<StaffMember> staffMembers { get; set; }
+        public List<Appointment> appointments { get; set; }
+        public List<Appointment> mdcs { get; set; }
+        public List<Appointment> totalappts { get; set; }
+        public List<Appointment> apptsPerClinic { get; set; }
+        public List<Referral> referrals { get; set; }
         public string staffCode { get; set; }
         public string staffName { get; set; }
         public bool isSupervisor { get; set; }
@@ -72,7 +78,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 {                    
                     staffName = _staffData.GetStaffName(User.Identity.Name);
                     staffCode = _staffData.GetStaffCode(User.Identity.Name);                    
-                    isSupervisor = _staffData.GetIsConsSupervisor(staffCode);
+                    isSupervisor = _supervisorData.GetIsConsSupervisor(staffCode);
                     _sql.SqlWriteUsageAudit(staffCode, "", "Appraisals index");
                 }
 
@@ -81,7 +87,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                     clinicianCode = staffCode;
                 }
 
-                staffMembers = _staffData.GetStaffMembers();
+                staffMembers = _staffData.GetStaffMemberList();
                 
                 clinCode = clinicianCode;
                 if (startDate == null)
@@ -93,7 +99,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                     endDate = DateTime.Now;
                 }
                 //Data
-                appointments = _appointmentData.GetAppointments(clinicianCode, startDate, endDate);
+                appointments = _appointmentData.GetAppointmentsByClinicians(clinicianCode, startDate, endDate);
                 mdcs = _appointmentData.GetMDC(clinicianCode, startDate, endDate);
                 totalappts = appointments.Concat(mdcs).OrderBy(a => a.BOOKED_DATE).ThenBy(a => a.BOOKED_TIME).ToList();
                 
@@ -122,16 +128,16 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
             {                
                 staffName = _staffData.GetStaffName(User.Identity.Name);
                 staffCode = _staffData.GetStaffCode(User.Identity.Name);                
-                isSupervisor = _staffData.GetIsConsSupervisor(staffCode);
+                isSupervisor = _supervisorData.GetIsConsSupervisor(staffCode);
                 _sql.SqlWriteUsageAudit(staffCode, $"Clinician={clinicianCode}", "Appraisals index");
-                staffMembers = _staffData.GetStaffMembers();
+                staffMembers = _staffData.GetStaffMemberList();
                 
                 if (clinicianCode != null)
                 {
                     staffCode = clinicianCode;
                 }
                 
-                appointments = _appointmentData.GetAppointments(staffCode, startDate, endDate);
+                appointments = _appointmentData.GetAppointmentsByClinicians(staffCode, startDate, endDate);
                 mdcs = _appointmentData.GetMDC(staffCode, startDate, endDate);
                 totalappts = appointments.Concat(mdcs).OrderBy(a => a.BOOKED_DATE).ThenBy(a => a.BOOKED_TIME).ToList();
 
@@ -149,7 +155,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 clinicsHeld = totalappts.DistinctBy(a => a.BOOKED_DATE).Count();
 
                 //referral data
-                referrals = _referralData.GetReferrals(clinicianCode, startDate, endDate);
+                referrals = _referralData.GetReferralsByStaffMember(clinicianCode, startDate, endDate);
                 
 
 

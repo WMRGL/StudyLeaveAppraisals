@@ -1,3 +1,5 @@
+using ClinicalXPDataConnections.Data;
+using ClinicalXPDataConnections.Meta;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using StudyLeaveAppraisals.Data;
@@ -7,16 +9,16 @@ namespace StudyLeaveAppraisals.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
         private readonly IConfiguration _config;
-        private readonly StaffData _staffData;
+        private readonly IStaffUserData _staffData;
         private readonly NotificationData _notificationData;
 
-        public IndexModel(DataContext context, IConfiguration config)
+        public IndexModel(ClinicalContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _staffData = new StaffData(_context);
+            _staffData = new StaffUserData(_context);
             _notificationData = new NotificationData(_context);
         }
 

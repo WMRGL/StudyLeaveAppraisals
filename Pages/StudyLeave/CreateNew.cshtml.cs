@@ -2,22 +2,24 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using StudyLeaveAppraisals.Data;
 using StudyLeaveAppraisals.Meta;
+using ClinicalXPDataConnections.Meta;
+using ClinicalXPDataConnections.Data;
 
 namespace StudyLeaveAppraisals.Pages.StudyLeave
 {
     public class CreateNewModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
         private readonly IConfiguration _config;
-        private readonly AppointmentData _meta;
-        private readonly StaffData _staffData;
+        private readonly IAppointmentData _meta;
+        private readonly IStaffUserData _staffData;
         private readonly DoSQL _sql;
-        public CreateNewModel(DataContext context, IConfiguration config)
+        public CreateNewModel(ClinicalContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
             _meta = new AppointmentData(_context);
-            _staffData = new StaffData(_context);
+            _staffData = new StaffUserData(_context);
             _sql = new DoSQL(_config);
             _config = config;
         }

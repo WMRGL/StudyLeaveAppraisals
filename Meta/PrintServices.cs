@@ -1,11 +1,9 @@
 ﻿using PdfSharpCore.Pdf;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Drawing.Layout;
-using StudyLeaveAppraisals.Data;
-using StudyLeaveAppraisals.Models;
+using ClinicalXPDataConnections.Models;
 using System.Globalization;
 using System.Net;
-using Microsoft.AspNetCore.Routing;
 
 namespace StudyLeaveAppraisals.Meta
 {
@@ -13,7 +11,7 @@ namespace StudyLeaveAppraisals.Meta
     {
  
         public PrintServices() {}
-        public void PrintReport(List<Appointments> totalAppts, List<Referrals> referrals, string? clinicianName, DateTime? startDate, DateTime? endDate)
+        public void PrintReport(List<Appointment> totalAppts, List<Referral> referrals, string? clinicianName, DateTime? startDate, DateTime? endDate)
         {            
             PdfDocument document = new PdfDocument();
             document.Info.Title = "My PDF";

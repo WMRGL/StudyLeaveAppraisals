@@ -3,24 +3,30 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using StudyLeaveAppraisals.Data;
 using StudyLeaveAppraisals.Meta;
 using StudyLeaveAppraisals.Models;
+using ClinicalXPDataConnections.Meta;
+using ClinicalXPDataConnections.Data;
 
 namespace StudyLeaveAppraisals.Pages.StudyLeave
 {
     public class DetailsModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly SLAContext _slaContext;
         private readonly IConfiguration _config;
         private readonly AppointmentData _meta;
-        private readonly StaffData _staffData;
+        private readonly IStaffUserData _staffData;
+        private readonly ISupervisorData _supervisorData;
         private readonly StudyLeaveRequestsData _studyLeaveRequestsData;
         private readonly DoSQL _sql;
-        public DetailsModel(DataContext context, IConfiguration config)
+        public DetailsModel(ClinicalContext context, SLAContext slaContext, IConfiguration config)
         {
             _context = context;
+            _slaContext = slaContext;
             _config = config;
             _meta = new AppointmentData(_context);
-            _staffData = new StaffData(_context);
-            _studyLeaveRequestsData = new StudyLeaveRequestsData(_context);
+            _staffData = new StaffUserData(_context);
+            _supervisorData = new SupervisorData(_slaContext);
+            _studyLeaveRequestsData = new StudyLeaveRequestsData(_slaContext);
             _sql = new DoSQL(_config);
             _config = config;
         }
@@ -41,7 +47,7 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
                 staffName = _staffData.GetStaffName(User.Identity.Name);
                 staffCode = _staffData.GetStaffCode(User.Identity.Name);
                 _sql.SqlWriteUsageAudit(staffCode, $"ID={ID}", "Study Leave Details");
-                isSupervisor = _staffData.GetIsGCSupervisor(staffCode);
+                isSupervisor = _supervisorData.GetIsGCSupervisor(staffCode);
                 Request = _studyLeaveRequestsData.GetRequestDetails(ID);
                 Funds = _studyLeaveRequestsData.GetFunds();
             }
@@ -57,7 +63,7 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
             {
                 staffName = _staffData.GetStaffName(User.Identity.Name);
                 staffCode = _staffData.GetStaffCode(User.Identity.Name);                
-                isSupervisor = _staffData.GetIsGCSupervisor(staffCode);
+                isSupervisor = _supervisorData.GetIsGCSupervisor(staffCode);
                 Request = _studyLeaveRequestsData.GetRequestDetails(id);
                 Funds = _studyLeaveRequestsData.GetFunds();
 

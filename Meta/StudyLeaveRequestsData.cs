@@ -5,9 +5,9 @@ namespace StudyLeaveAppraisals.Meta
 {
     public class StudyLeaveRequestsData
     {
-        private readonly DataContext _context;        
+        private readonly SLAContext _context;        
         
-        public StudyLeaveRequestsData(DataContext context) 
+        public StudyLeaveRequestsData(SLAContext context) 
         {
             _context = context;            
         }        
