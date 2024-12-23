@@ -40,7 +40,7 @@ namespace StudyLeaveAppraisals.Pages
                 }
                 else
                 {
-                    notificationMessage = _notificationData.GetMessage();
+                    notificationMessage = _notificationData.GetMessage("SLAOutage");
                     staffName = _staffData.GetStaffName(User.Identity.Name);
                     staffCode = _staffData.GetStaffCode(User.Identity.Name);                    
                     isLive = bool.Parse(_config.GetValue("IsLive", ""));

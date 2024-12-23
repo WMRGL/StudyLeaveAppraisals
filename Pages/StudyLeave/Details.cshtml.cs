@@ -25,7 +25,7 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
             _config = config;
             _meta = new AppointmentData(_context);
             _staffData = new StaffUserData(_context);
-            _supervisorData = new SupervisorData(_slaContext);
+            _supervisorData = new SupervisorData(_context);
             _studyLeaveRequestsData = new StudyLeaveRequestsData(_slaContext);
             _sql = new DoSQL(_config);
             _config = config;

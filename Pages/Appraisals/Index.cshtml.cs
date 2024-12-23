@@ -27,7 +27,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
             _appointmentData = new AppointmentData(_context);
             _referralData = new ReferralData(_context);
             _staffData = new StaffUserData(_context);
-            _supervisorData = new SupervisorData(_slaContext);
+            _supervisorData = new SupervisorData(_context);
             printer = new PrintServices();
             _sql = new DoSQL(_config);
         }
@@ -40,6 +40,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
         public List<Referral> referrals { get; set; }
         public string staffCode { get; set; }
         public string staffName { get; set; }
+        public StaffMember staffMember { get; set; }
         public bool isSupervisor { get; set; }
         public string clinCode;
         public DateTime startDate;
@@ -76,8 +77,10 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 }
                 else
                 {                    
-                    staffName = _staffData.GetStaffName(User.Identity.Name);
-                    staffCode = _staffData.GetStaffCode(User.Identity.Name);                    
+                    //staffName = _staffData.GetStaffName(User.Identity.Name);
+                    staffMember = _staffData.GetStaffMemberDetails(User.Identity.Name);
+                    //staffCode = _staffData.GetStaffCode(User.Identity.Name);
+                    staffCode = staffMember.STAFF_CODE;
                     isSupervisor = _supervisorData.GetIsConsSupervisor(staffCode);
                     _sql.SqlWriteUsageAudit(staffCode, "", "Appraisals index");
                 }
@@ -87,7 +90,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                     clinicianCode = staffCode;
                 }
 
-                staffMembers = _staffData.GetStaffMemberList();
+                staffMembers = _staffData.GetClinicalStaffList();
                 
                 clinCode = clinicianCode;
                 if (startDate == null)

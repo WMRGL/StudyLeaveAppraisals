@@ -22,24 +22,21 @@
     <h1>Appraisal clinic data</h1>
     <form method="post">
         <div class="row mb-5 g-5">
-            <div class="col-md-1">
-                @if (Model.isSupervisor)
-                {
-                    <label>Clinician:</label>
-                }
-            </div>
-            <div class="col-md-4">
-                @if(Model.isSupervisor)
-                {
+            @if (Model.isSupervisor || Model.staffMember.CLINIC_SCHEDULER_GROUPS == "Admin")
+            {
+                <div class="col-md-1">                
+                    <label>Clinician:</label>                
+                </div>
+                <div class="col-md-4">                
                     <select name="clinicianCode" asp-for="clinCode">
                         <option value="" selected>...Select</option>
                         @foreach(var s in Model.staffMembers)
                         {
                             <option value=@s.STAFF_CODE>@s.NAME</option>
                         }
-                    </select>
-                }
-            </div>
+                    </select>                
+                </div>
+            }
             <div class="col-md-1">
                 <label>From:</label>
             </div>
