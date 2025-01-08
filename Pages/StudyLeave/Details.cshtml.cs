@@ -43,10 +43,11 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
         public void OnGet(int ID)
         {
             try
-            {                
+            {
+                IPAddressFinder _ip = new IPAddressFinder(HttpContext);
                 staffName = _staffData.GetStaffName(User.Identity.Name);
                 staffCode = _staffData.GetStaffCode(User.Identity.Name);
-                _sql.SqlWriteUsageAudit(staffCode, $"ID={ID}", "Study Leave Details");
+                _sql.SqlWriteUsageAudit(staffCode, $"ID={ID}", "Study Leave Details", _ip.GetIPAddress());
                 isSupervisor = _supervisorData.GetIsGCSupervisor(staffCode);
                 Request = _studyLeaveRequestsData.GetRequestDetails(ID);
                 Funds = _studyLeaveRequestsData.GetFunds();

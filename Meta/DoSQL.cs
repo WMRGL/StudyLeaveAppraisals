@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using System;
 using System.Data;
+using System.Net;
 
 namespace StudyLeaveAppraisals.Meta
 {
@@ -52,7 +53,7 @@ namespace StudyLeaveAppraisals.Meta
             DoSQLCommand(sql);
         }
 
-        public void SqlWriteUsageAudit(string username, string searchTerm, string formName)
+        public void SqlWriteUsageAudit(string username, string searchTerm, string formName, string ipAddress)
         {
             SqlConnection _con = new SqlConnection(_config.GetConnectionString("ConString"));
             SqlCommand cmd = new SqlCommand("[sp_CreateAudit]", _con);
@@ -61,7 +62,7 @@ namespace StudyLeaveAppraisals.Meta
             cmd.Parameters.Add("@form", SqlDbType.VarChar).Value = formName;
             cmd.Parameters.Add("@database", SqlDbType.VarChar).Value = "SLA";
             cmd.Parameters.Add("@searchTerm", SqlDbType.VarChar).Value = searchTerm;
-            cmd.Parameters.Add("@machine", SqlDbType.VarChar).Value = System.Environment.MachineName;
+            cmd.Parameters.Add("@machine", SqlDbType.VarChar).Value = Dns.GetHostByAddress(ipAddress).HostName.Substring(0, 10);
 
             _con.Open();
             cmd.ExecuteNonQuery();

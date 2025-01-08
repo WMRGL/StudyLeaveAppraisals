@@ -45,16 +45,17 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
         public void OnGet(bool? isShowAll=false, string? staffMember="")
         {
             try
-            {
+            {                
                 if (User.Identity.Name is null)
                 {
                     Response.Redirect("Login");
                 }
                 else
                 {
+                    IPAddressFinder _ip = new IPAddressFinder(HttpContext);
                     staffName = _staffData.GetStaffName(User.Identity.Name);
                     staffCode = _staffData.GetStaffCode(User.Identity.Name);
-                    _sql.SqlWriteUsageAudit(staffCode, "", "Study Leave Index");
+                    _sql.SqlWriteUsageAudit(staffCode, "", "Study Leave Index", _ip.GetIPAddress());
                     isSupervisor = _supervisorData.GetIsGCSupervisor(staffCode);
                     ListFunds = _studyLeaveRequestsData.GetFunds();
                     ListStaffMembers = _staffData.GetStaffMemberList().Where(s => s.CLINIC_SCHEDULER_GROUPS == "GC").OrderBy(s => s.NAME).ToList();
@@ -85,9 +86,10 @@ namespace StudyLeaveAppraisals.Pages.StudyLeave
 
         public void OnPost(bool? isShowAll = false, string? staffMember="")
         {
+            IPAddressFinder _ip = new IPAddressFinder(HttpContext);
             staffName = _staffData.GetStaffName(User.Identity.Name);
             staffCode = _staffData.GetStaffCode(User.Identity.Name);
-            _sql.SqlWriteUsageAudit(staffCode, $"Staffmember={staffMember}", "Study Leave Index");
+            _sql.SqlWriteUsageAudit(staffCode, $"Staffmember={staffMember}", "Study Leave Index", _ip.GetIPAddress());
             isSupervisor = _supervisorData.GetIsGCSupervisor(staffCode);
             ListFunds = _studyLeaveRequestsData.GetFunds();
             ListStaffMembers = _staffData.GetStaffMemberList();

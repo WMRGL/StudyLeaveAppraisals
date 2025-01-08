@@ -70,6 +70,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
         {
             try
             {
+                IPAddressFinder _ip = new IPAddressFinder(HttpContext);
                 isSupervisor = false;
                 if (User.Identity.Name is null)
                 {
@@ -82,7 +83,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                     //staffCode = _staffData.GetStaffCode(User.Identity.Name);
                     staffCode = staffMember.STAFF_CODE;
                     isSupervisor = _supervisorData.GetIsConsSupervisor(staffCode);
-                    _sql.SqlWriteUsageAudit(staffCode, "", "Appraisals index");
+                    _sql.SqlWriteUsageAudit(staffCode, "", "Appraisals index", _ip.GetIPAddress());
                 }
 
                 if(clinicianCode == null)
@@ -128,11 +129,12 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
         public void OnPost(string? clinicianCode, DateTime? startDate, DateTime? endDate, bool? isPrintReq = false)
         {
             try
-            {                
+            {
+                IPAddressFinder _ip = new IPAddressFinder(HttpContext);
                 staffName = _staffData.GetStaffName(User.Identity.Name);
                 staffCode = _staffData.GetStaffCode(User.Identity.Name);                
                 isSupervisor = _supervisorData.GetIsConsSupervisor(staffCode);
-                _sql.SqlWriteUsageAudit(staffCode, $"Clinician={clinicianCode}", "Appraisals index");
+                _sql.SqlWriteUsageAudit(staffCode, $"Clinician={clinicianCode}", "Appraisals index", _ip.GetIPAddress());
                 staffMembers = _staffData.GetStaffMemberList();
                 
                 if (clinicianCode != null)
