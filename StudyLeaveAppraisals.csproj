@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <Reference Include="ClinicalXPDataConnections">
-      <HintPath>..\..\..\Websites\Libraries\ClinicalXPDataConnections.dll</HintPath>
+      <HintPath>G:\Technical Improvements Group\C# Libraries\ClinicalXPDataConnections.dll</HintPath>
     </Reference>
   </ItemGroup>
 

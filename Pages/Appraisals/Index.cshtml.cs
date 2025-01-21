@@ -132,7 +132,8 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
             {
                 IPAddressFinder _ip = new IPAddressFinder(HttpContext);
                 staffName = _staffData.GetStaffName(User.Identity.Name);
-                staffCode = _staffData.GetStaffCode(User.Identity.Name);                
+                staffCode = _staffData.GetStaffCode(User.Identity.Name);  
+                staffMember = _staffData.GetStaffMemberDetails(User.Identity.Name);
                 isSupervisor = _supervisorData.GetIsConsSupervisor(staffCode);
                 _sql.SqlWriteUsageAudit(staffCode, $"Clinician={clinicianCode}", "Appraisals index", _ip.GetIPAddress());
                 staffMembers = _staffData.GetStaffMemberList();
