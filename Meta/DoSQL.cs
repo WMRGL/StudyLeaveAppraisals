@@ -32,7 +32,7 @@ namespace StudyLeaveAppraisals.Meta
                 "costevent, duration, totalrequested, daterequested, staffcode, requestername, Granted) values (' "
                 + eventName + "', '" + eventDate.ToString("yyyy-MM-dd") + "', " + travelCost + ", " + accomCost + ", "
                 + eventCost + ", " + days + ", " + totalReq + ", '" + dateRequested.ToString("yyyy-MM-dd") + "', '" 
-                + staffCode +  "', '" + reqName + "', 'Pending')";
+                + staffCode +  "', '" + reqName.Replace("'", "''") + "', 'Pending')";
 
             DoSQLCommand(sql);
         }
