@@ -202,19 +202,7 @@ namespace StudyLeaveAppraisals.Pages.Telemetry
 
                 this.startDate = startDate.GetValueOrDefault();
                 this.endDate = endDate.GetValueOrDefault();
-                                
-
-                if (isPrintReq.GetValueOrDefault())
-                {
-                    string clinNameFixed = clinName.Replace("'", "");
-
-                    //printer.PrintReport(totalappts, "", clinNameFixed, startDate, endDate);
-
-                    //Response.Redirect("Download?sClin=" + clinNameFixed + "&startDate=" + startDate.Value.ToString("yyyy-MM-dd") + "&endDate=" + endDate.Value.ToString("yyyy-MM-dd"));
-                    Response.Redirect("Download?sClin=" + clinNameFixed);
-
-                }
-
+                
             }
             catch (Exception ex)
             {
