@@ -1,36 +1,31 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using StudyLeaveAppraisals.Data;
 using StudyLeaveAppraisals.Meta;
 using ClinicalXPDataConnections.Meta;
 using ClinicalXPDataConnections.Models;
 using ClinicalXPDataConnections.Data;
 
-namespace StudyLeaveAppraisals.Pages.Telemetry
+namespace StudyLeaveAppraisals.Pages.ClinicData
 {
     public class IndexModel : PageModel
     {
         private readonly IConfiguration _config;
         private readonly ClinicalContext _context;
         private readonly IAppointmentData _appointmentData;
-        private readonly ReferralData _referralData;
         private readonly IStaffUserData _staffData;
         private readonly IClinicVenueData _venueData;
         private readonly IOutcomeData _outcomeData;
         private readonly IDiseaseData _diseaseData;
-        private readonly ExportServices exporter;
         private readonly DoSQL _sql;
         public IndexModel(ClinicalContext context, IConfiguration config)
         {
             _config = config;
             _context = context;
             _appointmentData = new AppointmentData(_context);
-            _referralData = new ReferralData(_context);
             _staffData = new StaffUserData(_context);
             _venueData = new ClinicVenueData(_context);
             _outcomeData = new OutcomeData(_context);
             _diseaseData = new DiseaseData(_context);
-            exporter = new ExportServices(_context);
             _sql = new DoSQL(_config);
         }
 
