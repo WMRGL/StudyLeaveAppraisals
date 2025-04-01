@@ -5,6 +5,7 @@ using StudyLeaveAppraisals.Meta;
 using ClinicalXPDataConnections.Meta;
 using ClinicalXPDataConnections.Models;
 using ClinicalXPDataConnections.Data;
+using System.Net;
 
 namespace StudyLeaveAppraisals.Pages.Appraisals
 {
@@ -172,8 +173,8 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                     printer.PrintReport(totalappts, referrals, clinNameFixed, startDate, endDate);
 
                     //Response.Redirect("Download?sClin=" + clinNameFixed + "&startDate=" + startDate.Value.ToString("yyyy-MM-dd") + "&endDate=" + endDate.Value.ToString("yyyy-MM-dd"));
-                    Response.Redirect("Download?sClin=" + clinNameFixed);
-
+                    //Response.Redirect("Download?sClin=" + clinNameFixed);
+                    Response.Redirect(@Url.Content($"~/{clinNameFixed.Replace(" ", "_")}_{startDate.Value.ToString("yyyy-MM-dd")}_to_{endDate.Value.ToString("yyyy-MM-dd")}.pdf"));
                 }
 
             }

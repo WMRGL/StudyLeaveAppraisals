@@ -130,6 +130,7 @@
                     <th>Name</th>
                     <th>Date</th>
                     <th>Time</th>
+                    <th>Duration</th>
                     <th>Clinic</th>
                     <th>Clinician(s)</th>
                     <th>Type</th>
@@ -154,7 +155,8 @@
                             {
                                 @a.BOOKED_TIME.Value.ToString("HH:mm")
                             }
-                        </td>                        
+                        </td>
+                        <td>@a.Duration</td>
                         <td>@a.Clinic</td>
                         <td>
                             @a.Clinician

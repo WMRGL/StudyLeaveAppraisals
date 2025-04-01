@@ -190,14 +190,16 @@ namespace StudyLeaveAppraisals.Meta
             
 
 
-            string fileName = "wwwroot\\" + clinicianName.Replace(" ", "_") + ".pdf";
-            string fileNameLocal = @"C:\CGU_DB\" + clinicianName + " " + startDate.Value.ToString("yyyy-MM-dd") + " to " + endDate.Value.ToString("yyyy-MM-dd") + ".pdf";
+            string fileName = "wwwroot\\" + clinicianName.Replace(" ", "_") + "_" + startDate.Value.ToString("yyyy-MM-dd") + "_to_" + endDate.Value.ToString("yyyy-MM-dd") + ".pdf";
+            //string fileNameLocal = @"C:\CGU_DB\" + clinicianName + " " + startDate.Value.ToString("yyyy-MM-dd") + " to " + endDate.Value.ToString("yyyy-MM-dd") + ".pdf";
+            
             document.Save(fileName);
             
             
             //var uri = new System.Uri(new Uri("file://"), fileName);
             //var converted = uri.AbsoluteUri;
             //downloading doesn't work here, the following is not used
+            /*
             using (var client = new WebClient())
             {
                 //using (var s = client.GetStreamAsync(converted))
@@ -209,7 +211,7 @@ namespace StudyLeaveAppraisals.Meta
                 //}
                 client.DownloadFile(fileName, fileNameLocal);
             }
-
+            */
             //File.Delete(fileName);
         }
 
