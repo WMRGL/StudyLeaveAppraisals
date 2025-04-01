@@ -129,8 +129,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
         }
         public void OnPost(string? clinicianCode, DateTime? startDate, DateTime? endDate, bool? isPrintReq = false)
         {
-            try
-            {
+            try            {
                 IPAddressFinder _ip = new IPAddressFinder(HttpContext);
                 staffName = _staffData.GetStaffName(User.Identity.Name);
                 staffCode = _staffData.GetStaffCode(User.Identity.Name);  
@@ -143,6 +142,7 @@ namespace StudyLeaveAppraisals.Pages.Appraisals
                 {
                     staffCode = clinicianCode;
                 }
+                clinCode = clinicianCode;
                 
                 appointments = _appointmentData.GetAppointmentsByClinicians(staffCode, startDate, endDate);
                 mdcs = _appointmentData.GetMDC(staffCode, startDate, endDate);
