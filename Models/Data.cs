@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace StudyLeaveAppraisals.Models 
@@ -50,5 +51,29 @@ namespace StudyLeaveAppraisals.Models
         public string StaffCode { get; set; }        
         public bool isGCSupervisor { get; set; }
         public bool isConsSupervisor { get; set; }
-    }    
+    }
+
+    [Keyless]
+    [Table("ViewPatientTriagesAll", Schema = "dbo")]
+    public class TriageTotal
+    {
+        //[Key]
+        public int ICPID { get; set; }
+        public int RefID { get; set; }
+        public int MPI {  get; set; }
+        public string CGU_No { get; set; }
+        public string FIRSTNAME { get; set; }
+        public string LASTNAME { get; set; }
+        public bool Triaged { get; set; }
+        public string? TriagedBy { get; set; }
+        public string? TriagedByClinician { get; set; }
+        public DateTime? TriagedDate { get; set; }
+        public bool LogicalDelete { get; set; }
+        public string? Type { get; set; }
+        public string PATHWAY { get; set; }
+        public string? WaitingListClinician { get; set; }
+        public string? WaitingListClinicianName { get; set; }
+        public string? WaitingListClinic { get; set; }
+        public string? WaitingListClinicName { get; set; }
+    }
 }

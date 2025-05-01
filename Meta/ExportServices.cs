@@ -3,7 +3,12 @@ using ClinicalXPDataConnections.Meta;
 using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using StudyLeaveAppraisals.Data;
+using StudyLeaveAppraisals.Models;
+using System.Collections.Generic;
 using System.Data;
+using System.Numerics;
 
 namespace StudyLeaveAppraisals.Meta
 {
@@ -11,17 +16,23 @@ namespace StudyLeaveAppraisals.Meta
     {
         public string dlFilePath;
         private readonly ClinicalContext _clinContext;
+        private readonly SLAContext _slaContext;
         private readonly IAppointmentData _appointmentData;
+        private readonly IReferralData _referralData;
+        private readonly ITotalTriageData _triageData;
         private readonly IDiseaseData _diseaseData;
         
-        public ExportServices(ClinicalContext context) 
+        public ExportServices(ClinicalContext context, SLAContext slaContext) 
         { 
             _clinContext = context;
+            _slaContext = slaContext;
             _appointmentData = new AppointmentData(_clinContext);
+            _referralData = new ReferralData(_clinContext);
+            _triageData = new TotalTriageData(_slaContext);
             _diseaseData = new DiseaseData(_clinContext);
         }
 
-        public void ExportReport(List<Appointment> apptList, string username)
+        public void ExportClinicReport(List<Appointment> apptList, string username)
         {
             DataTable table = new DataTable();
 
@@ -74,13 +85,81 @@ namespace StudyLeaveAppraisals.Meta
             }
 
             //return table;
-            ToCSV(table, username);
+            ToCSV(table, username, "clinic");
 
         }
 
-        public void ToCSV(DataTable table, string username)
+        public void ExportReferralReport(List<Referral> referralList, string username)
         {
-            string fileName = $"clinicdata-{username}.csv";
+            DataTable table = new DataTable();
+
+            table.Columns.Add("CGU Number", typeof(string));
+            table.Columns.Add("Name", typeof(string));
+            table.Columns.Add("Referral Date", typeof(string));
+            table.Columns.Add("Pathway", typeof(string));
+            table.Columns.Add("Referred By", typeof(string));
+            table.Columns.Add("Referring Facility", typeof(string));
+            table.Columns.Add("Consultant", typeof(string));
+            table.Columns.Add("GC", typeof(string));
+
+            foreach (var rfl in referralList)
+            {
+                string referralDate = "";
+                
+                if(rfl.RefDate.HasValue) { referralDate = rfl.RefDate.Value.ToString("dd/MM/yyyy"); }
+
+                table.Rows.Add(rfl.CGU_No,
+                    rfl.FIRSTNAME + " " + rfl.LASTNAME,
+                    referralDate,
+                    rfl.PATHWAY,
+                    rfl.ReferringClinician,
+                    rfl.ReferringFacility,
+                    rfl.LeadClinician,
+                    rfl.GC
+                    );
+            }
+
+            //return table;
+            ToCSV(table, username, "referral");
+
+        }
+
+        public void ExportTriageReport(List<TriageTotal> triageList, string username)
+        {
+            DataTable table = new DataTable();
+
+            table.Columns.Add("CGU Number", typeof(string));
+            table.Columns.Add("Name", typeof(string));
+            table.Columns.Add("Triage Complete", typeof(string));
+            table.Columns.Add("Triaged Date", typeof(string));
+            table.Columns.Add("Triaged By", typeof(string));
+            table.Columns.Add("Waiting List", typeof(string));
+
+            foreach (var tr in triageList)
+            {
+                string triagedDate = "";
+                string triaged = "No";
+
+                if(tr.Triaged) { triaged = "Yes"; }
+
+                table.Rows.Add(tr.CGU_No,
+                    tr.FIRSTNAME + " " + tr.LASTNAME,
+                    triaged,
+                    triagedDate,
+                    tr.TriagedByClinician,
+                    tr.WaitingListClinicianName + " - " + tr.WaitingListClinicName
+                    );
+            }
+
+            //return table;
+            ToCSV(table, username, "triage");
+
+        }
+
+
+        public void ToCSV(DataTable table, string username, string type)
+        {
+            string fileName = $"{type}data-{username}.csv";
             string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Downloads\\" + fileName);
             StreamWriter sw = new StreamWriter(filePath, false);
             //headers
@@ -126,69 +205,89 @@ namespace StudyLeaveAppraisals.Meta
 
         [HttpGet("download")]
         //public async Task<IActionResult> DownloadFile(string filePath)
-        public async Task<IActionResult> DownloadFile(string username, string? clinicianCode, string? venueCode, string? outcome, string? seenby, string? diseaseCode, DateTime? startDate, DateTime? endDate)
+        public async Task<IActionResult> DownloadFile(string username, string? clinicianCode, string? venueCode, string? outcome, string? seenby, string? diseaseCode, 
+            DateTime? startDate, DateTime? endDate, string type)
         {
             //ExportReport(apptList, username);
             //Yep. We actually have to generate all of this again, because we can't just pass the list directly to the URL.
-            List<Appointment> appointments = _appointmentData.GetAppointmentsByClinicians(clinicianCode, startDate, endDate);
-            List<Appointment> mdcs = _appointmentData.GetMDC(clinicianCode, startDate, endDate);
-            List<Appointment> totalappts = appointments.Concat(mdcs).OrderBy(a => a.BOOKED_DATE).ThenBy(a => a.BOOKED_TIME).ToList();
-
-            if (venueCode != null)
+            if (type == "clinic")
             {
-                totalappts = totalappts.Where(a => a.FACILITY.ToUpper() == venueCode.ToUpper()).ToList();
-            }
+                List<Appointment> appointments = _appointmentData.GetAppointmentsByClinicians(clinicianCode, startDate, endDate);
+                List<Appointment> mdcs = _appointmentData.GetMDC(clinicianCode, startDate, endDate);
+                List<Appointment> totalappts = appointments.Concat(mdcs).OrderBy(a => a.BOOKED_DATE).ThenBy(a => a.BOOKED_TIME).ToList();
 
-            if (outcome != null)
-            {
-                totalappts = totalappts.Where(a => a.Attendance.ToUpper() == outcome.ToUpper()).ToList();
-            }
-
-            if (seenby != null)
-            {
-                totalappts = totalappts.Where(a => a.SeenBy != null).ToList();
-                totalappts = totalappts.Where(a => a.SeenBy.ToUpper() == seenby.ToUpper() ||
-                    (a.SeenBy2 != null && a.SeenBy2.ToUpper() == seenby.ToUpper()) ||
-                    (a.SeenBy3 != null && a.SeenBy3.ToUpper() == seenby.ToUpper())).ToList();
-            }
-
-            if (diseaseCode != null)
-            {
-                List<Patient> patients = new List<Patient>();
-                IPatientData patData = new PatientData(_clinContext);
-                foreach (var a in totalappts)
+                if (venueCode != null)
                 {
-                    patients.Add(patData.GetPatientDetails(a.MPI));
+                    totalappts = totalappts.Where(a => a.FACILITY.ToUpper() == venueCode.ToUpper()).ToList();
                 }
-                List<Diagnosis> diags = new List<Diagnosis>();
 
-                foreach (var pat in patients)
+                if (outcome != null)
                 {
-                    List<Diagnosis> diagsPerPatient = _diseaseData.GetDiseaseListByPatient(pat.MPI);
-                    foreach (var diagnosis in diagsPerPatient)
+                    totalappts = totalappts.Where(a => a.Attendance.ToUpper() == outcome.ToUpper()).ToList();
+                }
+
+                if (seenby != null)
+                {
+                    totalappts = totalappts.Where(a => a.SeenBy != null).ToList();
+                    totalappts = totalappts.Where(a => a.SeenBy.ToUpper() == seenby.ToUpper() ||
+                        (a.SeenBy2 != null && a.SeenBy2.ToUpper() == seenby.ToUpper()) ||
+                        (a.SeenBy3 != null && a.SeenBy3.ToUpper() == seenby.ToUpper())).ToList();
+                }
+
+                if (diseaseCode != null)
+                {
+                    List<Patient> patients = new List<Patient>();
+                    IPatientData patData = new PatientData(_clinContext);
+                    foreach (var a in totalappts)
                     {
-                        if (diagnosis.DISEASE_CODE == diseaseCode)
+                        patients.Add(patData.GetPatientDetails(a.MPI));
+                    }
+                    List<Diagnosis> diags = new List<Diagnosis>();
+
+                    foreach (var pat in patients)
+                    {
+                        List<Diagnosis> diagsPerPatient = _diseaseData.GetDiseaseListByPatient(pat.MPI);
+                        foreach (var diagnosis in diagsPerPatient)
                         {
-                            diags.Add(diagnosis);
+                            if (diagnosis.DISEASE_CODE == diseaseCode)
+                            {
+                                diags.Add(diagnosis);
+                            }
                         }
                     }
-                }
 
-                List<Appointment> actualAppts = new List<Appointment>();
+                    List<Appointment> actualAppts = new List<Appointment>();
 
-                foreach (var app in totalappts)
-                {
-                    if (diags.Where(d => d.MPI == app.MPI).Count() > 0)
+                    foreach (var app in totalappts)
                     {
-                        actualAppts.Add(app);
+                        if (diags.Where(d => d.MPI == app.MPI).Count() > 0)
+                        {
+                            actualAppts.Add(app);
+                        }
                     }
+
+                    totalappts = actualAppts;
+
+
                 }
-
-                totalappts = actualAppts;
-
+                ExportClinicReport(totalappts, username);
             }
 
-            ExportReport(totalappts, username);
+            if (type == "referral")
+            {
+                List<Referral> referrals = _referralData.GetReferralsByStaffMember(clinicianCode, startDate, endDate);
+
+                ExportReferralReport(referrals, username);
+            }
+
+            if (type == "triage")
+            {
+                List<TriageTotal> triages = _triageData.GetAllTriages(clinicianCode, startDate, endDate);
+
+                ExportTriageReport(triages, username);
+            }
+
+
 
             if (System.IO.File.Exists(dlFilePath))
             {

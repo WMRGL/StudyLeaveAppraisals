@@ -116,7 +116,7 @@
                 <a class="btn btn-primary btn-lg" asp-area=""
                    asp-page="/Download" asp-route-username=@Model.User.Identity.Name asp-route-clinicianCode="@Model.clinCode"                
                 asp-route-venueCode="@Model.venCode" asp-route-outcome="@Model.outCome" asp-route-seenby="@Model.seenBy" asp-route-diseaseCode="@Model.disCode"
-                   asp-route-startDate="@Model.startDate.ToString("yyyy-MM-dd")" asp-route-endDate="@Model.endDate.ToString("yyyy-MM-dd")">Export Data</a>
+                   asp-route-startDate="@Model.startDate.ToString("yyyy-MM-dd")" asp-route-endDate="@Model.endDate.ToString("yyyy-MM-dd")" asp-route-type="clinic">Export Data</a>
             </div>
         </div>        
     </form>
