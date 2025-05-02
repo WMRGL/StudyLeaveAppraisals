@@ -4,7 +4,6 @@
 }
 
 <div class="container">
-
     @if (Model.Message != null)
     {
         @if (!Model.isSuccess)
@@ -93,8 +92,6 @@
                 @Model.Request.GrantedDate.Value.ToString("dd/MM/yyyy")
             </dd>        
         </div>
-
-
     }
     else
     {
