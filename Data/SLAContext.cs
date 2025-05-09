@@ -10,6 +10,5 @@ namespace StudyLeaveAppraisals.Data
         public DbSet<StudyLeaveRequests> StudyLeaveRequests { get; set; }
         public DbSet<StudyLeaveFunds> StudyLeaveFunds { get; set; }
         public DbSet<Supervisors> Supervisors { get; set; }
-        public DbSet<TriageTotal> TriageTotal { get; set; }
     }
 }

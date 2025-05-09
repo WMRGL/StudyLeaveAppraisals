@@ -4,8 +4,6 @@ using StudyLeaveAppraisals.Meta;
 using ClinicalXPDataConnections.Meta;
 using ClinicalXPDataConnections.Models;
 using ClinicalXPDataConnections.Data;
-using StudyLeaveAppraisals.Models;
-using StudyLeaveAppraisals.Data;
 
 namespace StudyLeaveAppraisals.Pages.TriagesData
 {
@@ -13,17 +11,15 @@ namespace StudyLeaveAppraisals.Pages.TriagesData
     {
         private readonly IConfiguration _config;
         private readonly ClinicalContext _context;
-        private readonly SLAContext _slaContext;
         private readonly ITotalTriageData _triageData;
         private readonly IStaffUserData _staffData;        
         private readonly IDiseaseData _diseaseData;
         private readonly DoSQL _sql;
-        public IndexModel(ClinicalContext context, SLAContext slaContext, IConfiguration config)
+        public IndexModel(ClinicalContext context, IConfiguration config)
         {
             _config = config;
             _context = context;
-            _slaContext = slaContext;
-            _triageData = new TotalTriageData(_slaContext);
+            _triageData = new TotalTriageData(_context);
             _staffData = new StaffUserData(_context);           
             _diseaseData = new DiseaseData(_context);
             _sql = new DoSQL(_config);

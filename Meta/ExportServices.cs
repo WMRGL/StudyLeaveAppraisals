@@ -2,13 +2,8 @@
 using ClinicalXPDataConnections.Meta;
 using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using StudyLeaveAppraisals.Data;
-using StudyLeaveAppraisals.Models;
-using System.Collections.Generic;
 using System.Data;
-using System.Numerics;
 
 namespace StudyLeaveAppraisals.Meta
 {
@@ -16,7 +11,6 @@ namespace StudyLeaveAppraisals.Meta
     {
         public string dlFilePath;
         private readonly ClinicalContext _clinContext;
-        private readonly SLAContext _slaContext;
         private readonly IAppointmentData _appointmentData;
         private readonly IReferralData _referralData;
         private readonly ITotalTriageData _triageData;
@@ -25,10 +19,9 @@ namespace StudyLeaveAppraisals.Meta
         public ExportServices(ClinicalContext context, SLAContext slaContext) 
         { 
             _clinContext = context;
-            _slaContext = slaContext;
             _appointmentData = new AppointmentData(_clinContext);
             _referralData = new ReferralData(_clinContext);
-            _triageData = new TotalTriageData(_slaContext);
+            _triageData = new TotalTriageData(_clinContext);
             _diseaseData = new DiseaseData(_clinContext);
         }
 
